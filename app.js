@@ -21,8 +21,8 @@ var pool = mysql.createPool({
     host           : objCongig.dbHost,
     port           : objCongig.dbPost,
     user           : objCongig.dbUser,
-    //password       : objCongig.dbPass,
-    password       : null,
+    password       : objCongig.dbPass,
+    //password       : null,
     database       : objCongig.dbData
 });
 
@@ -46,16 +46,14 @@ app.listen(post, function(){
 
 // Config routes
 app.get("/", function(req, res){
-    console.log(req.session.login);
     if(req.session.login === "true") {
-        res.render("error");
+        res.render("home");
     } else {
         res.render("login", { 'meserr' : "" });
     }
 });
 
 app.post("/login", function(req, res){
-    console.log(req.session.login);
     if(req.session.login === "true" || lsAdmin.indexOf(req.body.username) >= 0)  {
         res.render("error");
     } else {

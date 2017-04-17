@@ -38,10 +38,70 @@ button#btn-submit {
     border: 2px solid #fb0a05;
 }
 
+div#d-contain {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#d-clear {
+    clear: both;
+}
+
+div#d-content {
+    float: left;
+}
+
+div#d-navigation {
+    float: left;
+    display: block;
+    width: 300px;
+    height: 100%;
+    border-right: 1px solid gray;
+}
+
+/* Menu */
+ul {
+    list-style: none;
+    padding: 0px;
+}
+div#menu {
+    font-size: 2em;
+    font-weight: bold;
+    height: 50px;
+    padding: 5px;
+    color: ivory;
+    background-color: black;
+    overflow: hidden;
+}
+i#btn-show-menu {
+    float: right;
+    padding: 5px;
+    cursor: pointer;
+}
+ul#sub-memu li span {
+    margin-right: 10px;
+}
+ul#sub-memu li {
+    border-top: 1px solid lightgray;
+    height: 45px;
+    cursor: pointer;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 10px;
+    transition: all 0.3s;
+    overflow: hidden;
+}
+ul#sub-memu li:hover {
+    background-color: aqua;
+    text-transform: capitalize;
+}
+
 /* Man hinh dien thoai */
 @media all and (max-width: 599px) {
     
 }
+
 /* Man hinh IPad */
 @media all and (min-width: 600px) and (max-width: 1023px) {
 
