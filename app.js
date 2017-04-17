@@ -21,7 +21,8 @@ var pool = mysql.createPool({
     host           : objCongig.dbHost,
     port           : objCongig.dbPost,
     user           : objCongig.dbUser,
-    password       : objCongig.dbPass,
+    //password       : objCongig.dbPass,
+    password       : null,
     database       : objCongig.dbData
 });
 
@@ -45,19 +46,44 @@ app.listen(post, function(){
 
 // Config routes
 app.get("/", function(req, res){
-    var sql = "SELECT * FROM `admin`"; // Thực hiện câu truy vấn và show dữ liệu
-    pool.query(sql, function(error, result){
-        if (error) throw error;
-        console.log("– USER TABLE — " , result);
-        res.json(result); // Trả kết quả về cho client dưới dạng json
-    });
+    console.log(req.session.login);
+    if(req.session.login === "true") {
+        res.render("error");
+    } else {
+        res.render("login", { 'meserr' : "" });
+    }
 });
 
-app.get("/login/:id", function(req, res){
-    if(lsAdmin.indexOf(req.params.id) >= 0) {
-		res.send("Da ton tai");
-	} else {
-		lsAdmin.push(req.params.id);
-		res.send("Dang nhap thanh cong");
-	}
+app.post("/login", function(req, res){
+    console.log(req.session.login);
+    if(req.session.login === "true" || lsAdmin.indexOf(req.body.username) >= 0)  {
+        res.render("error");
+    } else {
+        var sql = "SELECT * FROM `admin` WHERE UserName='"+req.body.username+"' AND PassWord='"+req.body.pass+"'"; // Thực hiện câu truy vấn và show dữ liệu
+        pool.getConnection(function(err, connection) {
+            connection.query(sql, function (error, results, fields) {
+                connection.release();
+                if (error) throw error;
+                else if (results.length>0) {
+                    req.session.login = "true";
+                    req.session.admin = results[0];
+                    lsAdmin.push(req.body.username);
+                    res.redirect("/");
+                } else {
+                    req.session.login = "false";
+                    res.render("login", {'meserr' : "Tên đăng nhập hoặc mật khẩu không chính xác !!!"});
+                }
+            });
+        });          
+    }
 });
+
+app.get("/logout", function(req, res){
+    req.session.login = "false";
+    var index = lsAdmin.indexOf(req.session.admin.UserName);
+    if (index != -1) {
+        lsAdmin.splice(index,1);
+    }
+    req.session.admin = null;
+    res.render("login", { 'meserr' : "" });
+})

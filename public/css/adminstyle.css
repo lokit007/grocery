@@ -1,0 +1,52 @@
+
+/* Màn hình login default */
+img#img-logo {
+    max-width: 300px;
+}
+
+div#d-content {
+    text-align: center;
+    margin-top: 5%;
+}
+
+form#f-login {
+    text-align: left;
+    padding: 10px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form#f-login input {
+    margin-bottom: 10px;
+}
+
+button#btn-submit {
+    float: right;
+}
+
+.head-1, .head-2, .head-3, .head-4, .head-5 {
+    font-weight: bold;
+    text-shadow: 2px 1px 1px #925f5f;
+}
+
+.div-error {
+    padding: 5px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #fb0a05;
+}
+
+/* Man hinh dien thoai */
+@media all and (max-width: 599px) {
+    
+}
+/* Man hinh IPad */
+@media all and (min-width: 600px) and (max-width: 1023px) {
+
+}
+/* Man hinh lap top */
+@media all and (min-width: 1024px) {
+    
+}
