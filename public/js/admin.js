@@ -66,3 +66,16 @@ function showcategory(e, idChange) {
     });
 
 }
+// Branch
+function infobranch(id) {
+    $.ajax({
+        url: "/branch/"+id,
+        type: "GET",
+        success: function(data){
+            alert(data.id);
+        },
+        error: function(){
+            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
+}

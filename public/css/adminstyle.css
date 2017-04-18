@@ -44,7 +44,7 @@ div#d-contain {
     width: 100%;
 }
 
-#d-clear {
+.d-clear {
     clear: both;
 }
 
@@ -132,7 +132,6 @@ strong#tittle {
 }
 .d-table {
     margin-top: 10px;
-    max-height: 55%;
 }
 td.col-phone {
     width: 200px;

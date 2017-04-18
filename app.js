@@ -21,8 +21,8 @@ var pool = mysql.createPool({
     host           : objCongig.dbHost,
     port           : objCongig.dbPost,
     user           : objCongig.dbUser,
-    //password       : objCongig.dbPass,
-    password       : null,
+    password       : objCongig.dbPass,
+    //password       : null,
     database       : objCongig.dbData
 });
 
@@ -84,4 +84,23 @@ app.get("/logout", function(req, res){
     }
     req.session.admin = null;
     res.render("login", { 'meserr' : "" });
+})
+
+var Branch = require('./models/branch.js');
+app.get('/branch/:id', function(req, res){
+    var sql = "SELECT * FROM `branch` WHERE IdBranch='"+req.params.id+"'"; // Thực hiện câu truy vấn và show dữ liệu
+    pool.getConnection(function(err, connection) {
+        connection.query(sql, function (error, results, fields) {
+            connection.release();
+            if (error) throw error;
+            else if (results.length>0) {
+                var obj = new Branch(results[0].IdBranch, results[0].NameBranch, results[0].Address, results[0].Phone, results[0].Email, results[0].Fax);
+                console.log(results[0]);
+                res.send(obj);
+            } else {
+                throw error;
+            }
+        });
+    });
+    
 })
