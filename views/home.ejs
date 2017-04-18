@@ -15,17 +15,17 @@
             <div id="d-navigation">
                 <div id="menu"> Menu <i id="btn-show-menu" class="fa fa-bars" aria-hidden="true"></i></div>
                 <ul id="sub-memu">
-                    <li data="donhang"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Đơn hàng</li>
-                    <li data="category"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Danh mục</li>
-                    <li data="sanpham"><span class="glyphicon glyphicon-sound-dolby" aria-hidden="true" ></span> Sản phẩm</li>
-                    <li data="doitac"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Đối tác</li>
-                    <li class="active" data="khuyenmai"><span class="glyphicon glyphicon-gift" aria-hidden="true"></span> Khuyến mãi</li>
-                    <li data="phanhoi"><span class="glyphicon glyphicon-comment" aria-hidden="true"></span> Phản hồi</li>
-                    <li data="quangcao"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Quảng cáo</li>
+                    <li data="donhang" class="active"><i class="fa fa-university" aria-hidden="true"></i> Chi nhánh</li>
+                    <li data="category"><i class="fa fa-address-card" aria-hidden="true"></i> Nhân viên</li>
+                    <li data="sanpham"><i class="fa fa-object-group" aria-hidden="true"></i> Danh mục</li>
+                    <li data="khuyenmai"><i class="fa fa-handshake-o" aria-hidden="true"></i> Đối tác</li>
+                    <li data="phanhoi"><i class="fa fa-database" aria-hidden="true"></i> Kho hàng</li>
+                    <li data="quangcao"><i class="fa fa-area-chart" aria-hidden="true"></i> Thống kê</li>
+                    <li data="quangcao"><i class="fa fa-envelope" aria-hidden="true"></i> Tin nhắn</li>
                 </ul>
             </div>
             <div id="d-content">
-                DỮ LIỆU ĐỒ VÀO
+                <% include designscreen/branch.ejs %>
             </div>
             <div id="d-clear"></div>
         </div>

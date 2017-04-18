@@ -4,7 +4,7 @@ img#img-logo {
     max-width: 300px;
 }
 
-div#d-content {
+div#d-content-login {
     text-align: center;
     margin-top: 5%;
 }
@@ -50,12 +50,16 @@ div#d-contain {
 
 div#d-content {
     float: left;
+    left: 20%;
+    width: 80%;
+    height: 100%;
+    overflow: auto;
 }
 
 div#d-navigation {
     float: left;
     display: block;
-    width: 300px;
+    width: 20%;
     height: 100%;
     border-right: 1px solid gray;
 }
@@ -79,8 +83,9 @@ i#btn-show-menu {
     padding: 5px;
     cursor: pointer;
 }
-ul#sub-memu li span {
+ul#sub-memu li i {
     margin-right: 10px;
+    width: 30px;
 }
 ul#sub-memu li {
     border-top: 1px solid lightgray;
@@ -95,6 +100,55 @@ ul#sub-memu li {
 ul#sub-memu li:hover {
     background-color: aqua;
     text-transform: capitalize;
+}
+li.active {
+    background-color: aliceblue;
+    cursor: no-drop !important;
+}
+
+/* Màn hình branch(Chi nhánh) */
+strong#tittle {
+    border-bottom: 1px solid gray;
+    height: 50px;
+    display: block;
+    font-size: 2em;
+    padding: 5px;
+    color: #791a1a;
+    text-shadow: 1px 1px 2px #eaa7a7;
+}
+.ctr-1x {
+    margin: 10px 0px 0px 10px;
+    max-width: 98%;
+}
+.ctr-3x {
+    max-width: 32%;
+    float: left !important;
+    margin: 10px 0px 0px 10px;
+}
+.ctr-btn {
+    width: 120px;
+    float: right;
+    margin: 10px 10px 0px 0px;
+}
+.d-table {
+    margin-top: 10px;
+    max-height: 55%;
+}
+td.col-phone {
+    width: 200px;
+}
+td.col-action {
+    width: 100px;
+}
+td.col-action i {
+    margin-left: 10px;
+    cursor: pointer;
+}
+td.col-action i:hover {
+    border: 1px solid #ca8c8c;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: aqua;
 }
 
 /* Man hinh dien thoai */
