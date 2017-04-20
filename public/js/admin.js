@@ -72,7 +72,37 @@ function infobranch(id) {
         url: "/branch/"+id,
         type: "GET",
         success: function(data){
-            alert(data.id);
+            if (data !== undefined) {
+                $("#key").val(data.id);
+                $("#name").val(data.name);
+                $("#address").val(data.address);
+                $("#phone").val(data.phone);
+                $("#email").val(data.email);
+                $("#fax").val(data.fax);    
+            }
+        },
+        error: function(){
+            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
+}
+// Branch
+function searchbranch() {
+    $.ajax({
+        url: "/branch/all/"+index,
+        type: "GET",
+        data : {
+            index: $('tbody').children('tr').length,
+            name: $("#name").val(),
+            address: $("#name").val(),
+            phone: $("#name").val(),
+            email: $("#name").val(),
+            fax: $("#name").val()
+        },
+        success: function(data){
+            if (data !== undefined) {
+                alert("Thành công");    
+            }
         },
         error: function(){
             alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");

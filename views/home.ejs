@@ -26,7 +26,11 @@
                 </ul>
             </div>
             <div id="d-content">
-                <% include designscreen/branch.ejs %>
+                <% if(screen === 0) { %>
+                    <% include designscreen/branch.ejs %>
+                <% } else { %>
+                    Không có dữ liệu
+                <% } %>
             </div>
             <div class="d-clear"></div>
         </div>

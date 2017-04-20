@@ -149,7 +149,20 @@ td.col-action i:hover {
     border-radius: 10px;
     background-color: aqua;
 }
-
+td#viewmore:hover i {
+    background-color: limegreen;
+    padding: 3px 5px;
+    border-radius: 5px;
+    color: white;
+}
+td#viewmore i {
+    margin-right: 10px;
+}
+td#viewmore {
+    cursor: pointer;
+    text-align: center;
+    font-weight: bold;
+}
 /* Man hinh dien thoai */
 @media all and (max-width: 599px) {
     
