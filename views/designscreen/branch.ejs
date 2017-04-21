@@ -38,8 +38,8 @@
             <td><%= data[i].address %></td>
             <td class="col-phone"><%= data[i].phone %></td>
             <td class="col-action">
-                <i class="fa fa-phone-square ctr-action" aria-hidden="true"></i>
-                <i class="fa fa-envelope ctr-action" aria-hidden="true"></i>
+                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].email %>';"></i>
+                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].phone %>';"></i>
                 <i class="fa fa-trash ctr-action" aria-hidden="true"></i>
             </td>
         </tr>

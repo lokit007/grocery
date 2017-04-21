@@ -1,7 +1,7 @@
 // Model
 var Branch = require("../models/branch.js");
 // Định nghĩa route
-var Route = function(app, pool) {
+var RouteBranch = function(app, pool) {
     // Lấy thông tin một chi nhánh
     app.get('/branch/:id', function(req, res){
         var sql = "SELECT * FROM `branch` WHERE IdBranch='"+req.params.id+"'";
@@ -40,14 +40,15 @@ var Route = function(app, pool) {
         }); 
     });
     // Lấy danh sách chi nhánh tìm kiếm autocomplex
-    app.get("/branch/all", function(req, res){
+    app.get('/search/branch', function(req, res){
         var sql = "SELECT * FROM `branch` ";
         sql += "WHERE NameBranch LIKE N'%" + req.query.name + "%' "
-        sql += "AND Address LIKE N'%" + req.query.address + "%' "
-        sql += "AND Phone LIKE N'%" + req.query.phone + "%' "
-        sql += "AND Email LIKE N'%" + req.query.email + "%' "
-        sql += "AND Fax LIKE N'%" + req.query.fax + "%' "
+        sql += "or Address LIKE N'%" + req.query.address + "%' "
+        sql += "or Phone LIKE N'%" + req.query.phone + "%' "
+        sql += "or Email LIKE N'%" + req.query.email + "%' "
+        sql += "or Fax LIKE N'%" + req.query.fax + "%' "
         sql += "order by IdBranch LIMIT "+req.query.index+", 10";
+        console.log(sql);
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {
@@ -60,11 +61,11 @@ var Route = function(app, pool) {
                         }
                         res.send(objList);
                     } else {
-                        res.send({});
+                        res.send([]);
                     }
                 });
         }); 
     });
 }
 
-module.exports = Route;
+module.exports = RouteBranch;

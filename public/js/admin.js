@@ -89,7 +89,7 @@ function infobranch(id) {
 // Branch
 function searchbranch() {
     $.ajax({
-        url: "/branch/all/"+index,
+        url: "/search/branch",
         type: "GET",
         data : {
             index: $('tbody').children('tr').length,
@@ -101,7 +101,24 @@ function searchbranch() {
         },
         success: function(data){
             if (data !== undefined) {
-                alert("Thành công");    
+                if(data.length<10) $("#viewmore").hide();
+                if(data.length>0) {
+                    var html = "";
+                    for(var i=0; i<data.length; i++) {
+                        html += "<tr onclick='infobranch("+ data[i].id +");'>";
+                        html += "<td>"+ data[i].id +"</td>";
+                        html += "<td>"+ data[i].name +"</td>";
+                        html += "<td>"+ data[i].address +"</td>";
+                        html += "<td class='col-phone'>"+ data[i].phone +"</td>";
+                        html += "<td class='col-action'>";
+                        html += "<i class='fa fa-phone-square ctr-action' aria-hidden='true' onclick='window.location.href = 'mailto:"+ data[i].email +"';'></i>";
+                        html += "<i class='fa fa-envelope ctr-action' aria-hidden='true' onclick='window.location.href = 'tel:"+ data[i].phone +"';'></i>";
+                        html += "<i class='fa fa-trash ctr-action' aria-hidden='true'></i>";
+                        html += "</td>"
+                        html += "</tr>"
+                    }
+                    $('tbody').append(html);
+                }
             }
         },
         error: function(){
