@@ -31,6 +31,11 @@ $(document).ready(function(){
     $("#backToTop").click(function(){
        $('html, body').animate({ scrollTop: 0 }, 500);
    });
+   // Input branch
+   $('input.form-control').on('input', function(){
+        $('tbody').children('tr').remove();
+        searchbranch();
+   });
 });
 // Click item Category and Update
 function updatecategory(e, id) {
@@ -66,7 +71,7 @@ function showcategory(e, idChange) {
     });
 
 }
-// Branch
+// Branch info
 function infobranch(id) {
     $.ajax({
         url: "/branch/"+id,
@@ -86,7 +91,7 @@ function infobranch(id) {
         }
     });
 }
-// Branch
+// Branch search
 function searchbranch() {
     $.ajax({
         url: "/search/branch",
@@ -94,10 +99,10 @@ function searchbranch() {
         data : {
             index: $('tbody').children('tr').length,
             name: $("#name").val(),
-            address: $("#name").val(),
-            phone: $("#name").val(),
-            email: $("#name").val(),
-            fax: $("#name").val()
+            address: $("#address").val(),
+            phone: $("#phone").val(),
+            email: $("#email").val(),
+            fax: $("#fax").val()
         },
         success: function(data){
             if (data !== undefined) {
@@ -125,4 +130,25 @@ function searchbranch() {
             alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
+}
+// Branch delete
+function deletebranch(id) {
+    var btn = confirm("Việc xóa chi nhánh ảnh hưởng đến các ràng buộc cơ sở dữ liệu !!!\n Bạn có muốn tiếp tục xóa nó không?");
+    if(btn === true) {
+        $.ajax({
+            url: "/delete/branch/"+id,
+            type: "GET",
+            success: function(data){
+                if (data === "Success") {
+                    alert("Đã xóa thành công chi nhánh.");
+                    window.location.reload(true);  
+                } else {
+                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                }
+            },
+            error: function(){
+                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            }
+        });
+    }
 }

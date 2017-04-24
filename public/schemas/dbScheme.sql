@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.24, for Win32 (x86)
+-- MySQL dump 10.13  Distrib 5.7.12, for Win32 (AMD64)
 --
 -- Host: 127.0.0.1    Database: grocerydb
 -- ------------------------------------------------------
--- Server version	5.6.26-log
+-- Server version	5.5.5-10.1.19-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -69,7 +69,7 @@ CREATE TABLE `branch` (
 
 LOCK TABLES `branch` WRITE;
 /*!40000 ALTER TABLE `branch` DISABLE KEYS */;
-INSERT INTO `branch` VALUES (1,'Chi nhánh một','Địa chỉ chi nhánh một','1234567899','chinhanh001@gmail.com',NULL),(2,'Chi nhánh hai','Địa chỉ chi nhánh hai','01234567888','chinhanh2@gmail.com',NULL);
+INSERT INTO `branch` VALUES (1,'Chi nhánh 1','Địa chỉ chi nhánh 1','01234567899','chinhanh1@gmail.com',NULL);
 /*!40000 ALTER TABLE `branch` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -267,6 +267,35 @@ INSERT INTO `jurisdiction` VALUES (1,'Root','Quản trị viên cao cấp của 
 UNLOCK TABLES;
 
 --
+-- Table structure for table `log`
+--
+
+DROP TABLE IF EXISTS `log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log` (
+  `IdLog` int(11) NOT NULL AUTO_INCREMENT,
+  `SqlAction` text CHARACTER SET utf8 NOT NULL,
+  `NoteAction` text CHARACTER SET utf8,
+  `Action` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `DateCreate` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `AdminId` int(11) DEFAULT NULL,
+  `StateAction` int(11) DEFAULT NULL,
+  PRIMARY KEY (`IdLog`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Ghim lại các thay đổi trên csdl : insert, update, delete';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log`
+--
+
+LOCK TABLES `log` WRITE;
+/*!40000 ALTER TABLE `log` DISABLE KEYS */;
+INSERT INTO `log` VALUES (1,'DELETE FROM `branch` WHERE IdBranch=\'2\'','Delete Branch, Id = 2, State : Sussec','Delete','2017-04-24 11:36:26',0,0),(2,'DELETE FROM `branch` WHERE IdBranch=\'2\'','Delete Branch, Id = 2, State : Sussec','Delete','2017-04-24 11:40:43',0,0),(3,'DELETE FROM `branch` WHERE IdBranch=\'2\'','Delete Branch, Id = 2, State : Success, Row : 0','Delete','2017-04-24 11:49:26',0,0),(4,'DELETE FROM `branch` WHERE IdBranch=\'1\'','Delete Branch, Id = 1, State : Success, Row : 1','Delete','2017-04-24 11:50:48',0,0),(5,'DELETE FROM `branch` WHERE IdBranch=\'1\'','Delete Branch, Id = 1, State : Success, Row : 0','Delete','2017-04-24 11:52:37',0,0),(6,'DELETE FROM `branch` WHERE IdBranch=\'1\'','Delete Branch, Id = 1, State : Success, Row : 0','Delete','2017-04-24 11:52:43',0,0),(7,'DELETE FROM `branch` WHERE IdBranch=\'2\'','Delete Branch, Id = 2, State : Success, Row : 1','Delete','2017-04-24 15:22:12',0,0),(8,'DELETE FROM `branch` WHERE IdBranch=\'2\'','Delete Branch, Id = 2, State : Success, Row : 1','Delete','2017-04-24 15:30:47',0,0);
+/*!40000 ALTER TABLE `log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `product`
 --
 
@@ -383,4 +412,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-16 22:25:19
+-- Dump completed on 2017-04-24 16:41:59
