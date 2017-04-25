@@ -1,14 +1,14 @@
 <strong id="tittle">Thông tin chi nhánh</strong>
 <form action="#" method="POST" autocomplete="on">
     <input type="hidden" id="key" name="key" />
-    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="Nhập tên chi nhánh ..." />
-    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="Địa chỉ ..." />
-    <input type="tel" id="phone" class="form-control ctr-3x" name="phonebranch" placeholder="Số điện thoại ..." />
+    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." />
+    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." />
+    <input type="tel" id="phone" class="form-control ctr-3x" name="phonebranch" placeholder="(*) Số điện thoại ..." />
     <input type="email" id="email" class="form-control ctr-3x" name="emailbranch" placeholder="Email ..." />
     <input type="text" id="fax" class="form-control ctr-3x" name="faxbranch" placeholder="Số fax ..." />
-    <button type="button" class="btn btn-danger btn-sm ctr-btn"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
-    <button type="button" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-check" aria-hidden="true"></i> Cập nhật</button>
-    
+    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
+    <button type="button" id="update" onclick="updatebranch(false);" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="button" id="add" onclick="updatebranch(true);" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
 </form>
 <div id="view" class="d-clear"></div>
 <script>
