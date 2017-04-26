@@ -302,9 +302,8 @@ function searchcategory() {
                         html += "<td>"+ data[i].id +"</td>";
                         html += "<td>"+ data[i].name +"</td>";
                         html += "<td class='col-action'>";
-                        html += "<i class='fa fa-phone-square ctr-action' aria-hidden='true' onclick='window.location.href = 'mailto:"+ data[i].email +"';'></i>";
-                        html += "<i class='fa fa-envelope ctr-action' aria-hidden='true' onclick='window.location.href = 'tel:"+ data[i].phone +"';'></i>";
-                        html += "<i class='fa fa-trash ctr-action' aria-hidden='true'></i>";
+                        html += "<i class='fa fa-bookmark ctr-action' aria-hidden='true' title='Click để xóa danh mục đã ghim'></i>";
+                        html += "<i class='fa fa-trash ctr-action' aria-hidden='true' onclick='deletecategory('"+ data[i].id +"');'></i>";
                         html += "</td>"
                         html += "</tr>"
                     }
@@ -343,7 +342,7 @@ function updatecategory(iadd) {
     // Check item null
     var name = $("#name").val();
     if (name == "") {
-        alert("Tên chi nhánh không được để trống!!!");
+        alert("Tên danh mục không được để trống!!!");
         $("#name").focus();
     } else {
         // Check data exist
@@ -369,7 +368,8 @@ function updatecategory(iadd) {
                             type: "POST",
                             data: {
                                 id: idChange,
-                                name: $("#name").val()
+                                name: $("#name").val(),
+                                description: $("#description").val()
                             },
                             success: function(dataChange){
                                 if (dataChange === "Success") {

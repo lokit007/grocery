@@ -4,7 +4,11 @@ var Category = require("../models/category.js");
 var RouteCategory = function(app, pool) {
     // Danh sách category mới khởi tạo
     app.get('/category', function(req, res){
-        var sql = "SELECT * FROM `category` order by IdCategory LIMIT 0, 10";
+        var sql = "select IdCategory, `category`.Name, Description, State, Count(IdProduct) as NumberProduct from `category` ";
+        sql += "left join `product` on `category`.IdCategory = `product`.CategoryId "
+        sql += "group by IdCategory, `category`.Name, Description, State "
+        sql += "order by IdCategory "
+        sql += "limit 0, 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {
@@ -13,7 +17,7 @@ var RouteCategory = function(app, pool) {
                     else if (results.length>0) {
                         var objList = [];
                         for(var i=0; i<results.length; i++) {
-                            objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State));
+                            objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State, results[i].NumberProduct));
                         }
                         res.render("home", {screen: 2, data : objList});
                     } else {
@@ -41,9 +45,12 @@ var RouteCategory = function(app, pool) {
     });
     // Lấy danh sách danh mục tìm kiếm autocomplex
     app.get('/search/category', function(req, res){
-        var sql = "SELECT * FROM `category` ";
-        sql += "WHERE Name LIKE N'%" + req.query.name + "%' "
-        sql += "order by IdCategory LIMIT "+req.query.index+", 10";
+        var sql = "select IdCategory, `category`.Name, Description, State, Count(IdProduct) as NumberProduct from `category` ";
+        sql += "left join `product` on `category`.IdCategory = `product`.CategoryId "
+        sql += "where `category`.Name like N'%" + req.query.name + "%' "
+        sql += "group by IdCategory, `category`.Name, Description, State "
+        sql += "order by IdCategory "
+        sql += "limit "+req.query.index+", 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {
@@ -52,7 +59,7 @@ var RouteCategory = function(app, pool) {
                     else if (results.length>0) {
                         var objList = [];
                         for(var i=0; i<results.length; i++) {
-                            objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State));
+                            objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State, results[i].NumberProduct));
                         }
                         res.send(objList);
                     } else {
@@ -66,19 +73,19 @@ var RouteCategory = function(app, pool) {
         var sql = "";
         var obj = {};
         var id = req.body.id;
+        var dNow = new Date();
         if (id == '-1') {
             sql += "INSERT INTO `category` SET ?";
             obj = {
-                NameBranch: req.body.name,
-                Address: req.body.address,
-                Phone: req.body.phone,
-                Email: req.body.email,
-                Fax: req.body.fax
+                Name: req.body.name,
+                Description: req.body.description,
+                DateCreate: dNow.toLocaleString(),
+                State: 0
             }
             console.log('add ');
         } else {
-            sql += "UPDATE `category` SET NameBranch = ?, Address = ?, Phone = ?, Email = ?, Fax = ? WHERE IdBranch = ?";
-            obj = [req.body.name, req.body.address, req.body.phone, req.body.email, req.body.fax, id]
+            sql += "UPDATE `category` SET Name = ?, Description = ? WHERE IdCategory = ?";
+            obj = [req.body.name, req.body.description, id]
             console.log('update ');
         }
         pool.getConnection(function(err, connection) {
@@ -90,7 +97,6 @@ var RouteCategory = function(app, pool) {
                         throw error;
                     });
                     // Cập nhật Log liên quan đến thay đổi csdl
-                    var dNow = new Date();
                     var insertLog = "INSERT INTO `log` SET ?";
                     var objLog = {
                         SqlAction: sql,
@@ -130,7 +136,7 @@ var RouteCategory = function(app, pool) {
                         throw error;
                     });
                     // Xóa dữ liệu có liên quan
-                    var sqlDelRel = "DELETE FROM `depot` WHERE Category='"+req.params.id+"'";
+                    var sqlDelRel = "DELETE FROM `product` WHERE CategoryId='"+req.params.id+"'";
                     connection.query(sqlDelRel, function(errorRel, resultRels){
                         if(errorRel) connection.rollback(function(){
                             res.send("Erorr");
@@ -142,7 +148,7 @@ var RouteCategory = function(app, pool) {
                     var insertLog = "INSERT INTO `log` SET ?";
                     var objLog = {
                         SqlAction: sql,
-                        NoteAction: "Delete Branch, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
+                        NoteAction: "Delete Category, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
                         Action: "Delete",
                         DateCreate: dNow.toLocaleString(),
                         AdminId: "root",

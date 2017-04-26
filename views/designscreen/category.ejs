@@ -29,10 +29,9 @@
         <% for(i=0; i<data.length; i++) { %>
         <tr onclick="infocategory('<%= data[i].id %>');">
             <td><%= data[i].id %></td>
-            <td><%= data[i].name %></td>
+            <td><strong title="Số loại sản phẩm có trong danh mục">[<%= data[i].numberproduct %>]</strong> <%= data[i].name %></td>
             <td class="col-action">
-                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].email %>';"></i>
-                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].phone %>';"></i>
+                <i class="fa fa-bookmark ctr-action" aria-hidden="true" title="Click để xóa danh mục đã ghim"></i>
                 <i class="fa fa-trash ctr-action" onclick="deletecategory('<%= data[i].id %>');" aria-hidden="true"></i>
             </td>
         </tr>
