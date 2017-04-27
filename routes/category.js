@@ -28,10 +28,10 @@ var RouteCategory = function(app, pool) {
     });
     // Lấy thông tin một danh mục
     app.get('/category/:id', function(req, res){
-        var sql = "SELECT * FROM `category` WHERE IdCategory='"+req.params.id+"'";
+        var sql = "SELECT * FROM `category` WHERE IdCategory=?";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
+            else connection.query(sql, [req.params.id], function (error, results, fields) {
                     connection.release();
                     if (error) throw error;
                     else if (results.length>0) {
@@ -47,25 +47,25 @@ var RouteCategory = function(app, pool) {
     app.get('/search/category', function(req, res){
         var sql = "select IdCategory, `category`.Name, Description, State, Count(IdProduct) as NumberProduct from `category` ";
         sql += "left join `product` on `category`.IdCategory = `product`.CategoryId "
-        sql += "where `category`.Name like N'%" + req.query.name + "%' "
+        sql += "where `category`.Name like N? "
         sql += "group by IdCategory, `category`.Name, Description, State "
         sql += "order by IdCategory "
-        sql += "limit "+req.query.index+", 10 ";
+        sql += "limit ?, 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State, results[i].NumberProduct));
-                        }
-                        res.send(objList);
-                    } else {
-                        res.send([]);
+            else connection.query(sql, ["%"+req.query.name+"%", parseInt(req.query.index)], function (error, results, fields) {
+                connection.release();
+                if (error) throw error;
+                else if (results.length>0) {
+                    var objList = [];
+                    for(var i=0; i<results.length; i++) {
+                        objList.push(new Category(results[i].IdCategory, results[i].Name, results[i].Description, results[i].State, results[i].NumberProduct));
                     }
-                });
+                    res.send(objList);
+                } else {
+                    res.send([]);
+                }
+            });
         }); 
     });
     // Thêm, cập nhật một category
@@ -126,18 +126,18 @@ var RouteCategory = function(app, pool) {
     });
     // Xóa category
     app.get('/delete/category/:id', function(req, res){
-        var sql = "DELETE FROM `category` WHERE IdCategory='"+req.params.id+"'";
+        var sql = "DELETE FROM `category` WHERE IdCategory=?";
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
-                connection.query(sql, function(error, results, fields){
+                connection.query(sql, [req.params.id], function(error, results, fields){
                     if(error) connection.rollback(function(){
                         res.send("Erorr");
                         throw error;
                     });
                     // Xóa dữ liệu có liên quan
-                    var sqlDelRel = "DELETE FROM `product` WHERE CategoryId='"+req.params.id+"'";
-                    connection.query(sqlDelRel, function(errorRel, resultRels){
+                    var sqlDelRel = "DELETE FROM `product` WHERE CategoryId=?";
+                    connection.query(sqlDelRel, [req.params.id], function(errorRel, resultRels){
                         if(errorRel) connection.rollback(function(){
                             res.send("Erorr");
                             throw errorRel;

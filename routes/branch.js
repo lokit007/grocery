@@ -24,10 +24,10 @@ var RouteBranch = function(app, pool) {
     });
     // Lấy thông tin một chi nhánh
     app.get('/branch/:id', function(req, res){
-        var sql = "SELECT * FROM `branch` WHERE IdBranch='"+req.params.id+"'";
+        var sql = "SELECT * FROM `branch` WHERE IdBranch=?";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
+            else connection.query(sql, [req.params.id], function (error, results, fields) {
                     connection.release();
                     if (error) throw error;
                     else if (results.length>0) {
@@ -42,15 +42,23 @@ var RouteBranch = function(app, pool) {
     // Lấy danh sách chi nhánh tìm kiếm autocomplex
     app.get('/search/branch', function(req, res){
         var sql = "SELECT * FROM `branch` ";
-        sql += "WHERE NameBranch LIKE N'%" + req.query.name + "%' "
-        sql += "AND Address LIKE N'%" + req.query.address + "%' "
-        sql += "AND Phone LIKE '%" + req.query.phone + "%' "
-        sql += "AND (Email LIKE '%" + req.query.email + "%' OR Email is null)"
-        sql += "AND (Fax LIKE '%" + req.query.fax + "%' OR Fax is null)"
-        sql += "order by IdBranch LIMIT "+req.query.index+", 10";
+        sql += "WHERE NameBranch LIKE N? "
+        sql += "AND Address LIKE N? "
+        sql += "AND Phone LIKE ? "
+        sql += "AND (Email LIKE ? OR Email is null)"
+        sql += "AND (Fax LIKE ? OR Fax is null)"
+        sql += "order by IdBranch LIMIT ?, 10";
+        var params = [
+            "%" + req.query.name + "%",
+            "%" + req.query.address + "%",
+            "%" + req.query.phone + "%",
+            "%" + req.query.email + "%",
+            "%" + req.query.fax + "%",
+            parseInt(req.query.index)
+        ]
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
+            else connection.query(sql, params, function (error, results, fields) {
                     connection.release();
                     if (error) throw error;
                     else if (results.length>0) {
@@ -124,18 +132,18 @@ var RouteBranch = function(app, pool) {
     });
     // Xóa branch
     app.get('/delete/branch/:id', function(req, res){
-        var sql = "DELETE FROM `branch` WHERE IdBranch='"+req.params.id+"'";
+        var sql = "DELETE FROM `branch` WHERE IdBranch=?";
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
-                connection.query(sql, function(error, results, fields){
+                connection.query(sql, [req.query.index], function(error, results, fields){
                     if(error) connection.rollback(function(){
                         res.send("Erorr");
                         throw error;
                     });
                     // Xóa dữ liệu có liên quan
-                    var sqlDelRel = "DELETE FROM `depot` WHERE BranchId='"+req.params.id+"'";
-                    connection.query(sqlDelRel, function(errorRel, resultRels){
+                    var sqlDelRel = "DELETE FROM `depot` WHERE BranchId=?";
+                    connection.query(sqlDelRel, [req.query.index], function(errorRel, resultRels){
                         if(errorRel) connection.rollback(function(){
                             res.send("Erorr");
                             throw errorRel;
