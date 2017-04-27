@@ -1,0 +1,54 @@
+<strong id="tittle">Thông tin chi nhánh</strong>
+<form action="#" method="POST" autocomplete="on">
+    <input type="hidden" id="key" name="key" />
+    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." />
+    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." />
+    <input type="tel" id="phone" class="form-control ctr-3x" name="phonebranch" placeholder="(*) Số điện thoại ..." />
+    <input type="email" id="email" class="form-control ctr-3x" name="emailbranch" placeholder="Email ..." />
+    <input type="text" id="fax" class="form-control ctr-3x" name="faxbranch" placeholder="Số fax ..." />
+    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
+    <button type="button" id="update" onclick="updatebranch(false);" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="button" id="add" onclick="updatebranch(true);" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
+</form>
+<div id="view" class="d-clear"></div>
+<script>
+    $(document).ready(function(){
+        $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+        $(window).resize(function(){
+            $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+        });
+    });
+</script>
+<div class="table-responsive d-table" id="d-fixheight">
+    <table class="table table-hover table-condensed table-striped">
+        <thead>
+        <tr>
+            <th>#</td>
+            <th>Tên chi nhánh</th>
+            <th>Địa chỉ</th>
+            <th>Điện thoại</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(i=0; i<data.length; i++) { %>
+        <tr onclick="infobranch('<%= data[i].id %>');">
+            <td><%= data[i].id %></td>
+            <td><%= data[i].name %></td>
+            <td><%= data[i].address %></td>
+            <td class="col-phone"><%= data[i].phone %></td>
+            <td class="col-action">
+                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].email %>';"></i>
+                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].phone %>';"></i>
+                <i class="fa fa-trash ctr-action" onclick="deletebranch('<%= data[i].id %>');" aria-hidden="true"></i>
+            </td>
+        </tr>
+       <% } %>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" id="viewmore" onclick="searchbranch()"><i class="fa fa-angle-double-down" aria-hidden="true"></i> xem thêm ...</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

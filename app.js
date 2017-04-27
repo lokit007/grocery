@@ -21,8 +21,8 @@ var pool = mysql.createPool({
     host           : objCongig.dbHost,
     port           : objCongig.dbPost,
     user           : objCongig.dbUser,
-    //password       : objCongig.dbPass,
-    password       : null,
+    password       : objCongig.dbPass,
+    // password       : null,
     database       : objCongig.dbData
 });
 
@@ -57,9 +57,9 @@ app.post("/login", function(req, res){
     if(req.session.login === "true" || lsAdmin.indexOf(req.body.username) >= 0)  {
         res.render("error");
     } else {
-        var sql = "SELECT * FROM `admin` WHERE UserName='"+req.body.username+"' AND PassWord='"+req.body.pass+"'"; // Thực hiện câu truy vấn và show dữ liệu
+        var sql = "SELECT * FROM `admin` WHERE UserName=? AND PassWord=?"; // Thực hiện câu truy vấn và show dữ liệu
         pool.getConnection(function(err, connection) {
-            connection.query(sql, function (error, results, fields) {
+            connection.query(sql, [req.body.username, req.body.pass], function (error, results, fields) {
                 connection.release();
                 if (error) throw error;
                 else if (results.length>0) {
