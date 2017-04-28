@@ -1,14 +1,20 @@
-<strong id="tittle">Thông tin chi nhánh</strong>
+<strong id="tittle">Thông tin nhân viên</strong>
 <form action="#" method="POST" autocomplete="on">
     <input type="hidden" id="key" name="key" />
-    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." />
-    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." />
-    <input type="tel" id="phone" class="form-control ctr-3x" name="phonebranch" placeholder="(*) Số điện thoại ..." />
-    <input type="email" id="email" class="form-control ctr-3x" name="emailbranch" placeholder="Email ..." />
-    <input type="text" id="fax" class="form-control ctr-3x" name="faxbranch" placeholder="Số fax ..." />
-    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
-    <button type="button" id="update" onclick="updatebranch(false);" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
-    <button type="button" id="add" onclick="updatebranch(true);" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
+    <input type="text" id="username" class="form-control ctr-3x" name="username" placeholder="(*) Nick name ..." />
+    <input type="text" id="fullname" class="form-control ctr-3x" name="fullname" placeholder="(*) Họ và tên ..." />
+    <input type="text" id="identitycard" class="form-control ctr-3x" name="identitycard" placeholder="(*) CMND/Hộ chiếu ..." />
+    <div id="view" class="d-clear"></div>
+    <input type="text" id="address" class="form-control ctr-1x" name="address" placeholder="(*) Địa chỉ liên hệ ..." />
+    <input type="tel" id="phone" class="form-control ctr-3x" name="phone" placeholder="(*) Số điện thoại ..." />
+    <input type="email" id="email" class="form-control ctr-3x" name="email" placeholder="Email ..." />
+    <input type="text" id="salary" class="form-control ctr-3x" name="salary" placeholder="(*) Tổng lương ..." />
+    <div id="view" class="d-clear"></div>
+    <input type="text" id="branch" class="form-control ctr-1x" name="branch" placeholder="(*) Nhập chi nhánh làm việc ..." />
+    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa nhân viên</button>
+    <button type="button" id="update" data-toggle="modal" data-target="#myModal" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="button" id="info" data-toggle="modal" data-target="#myModal" class="btn btn-info btn-sm ctr-btn" disabled><i class="fa fa-info" aria-hidden="true"></i> Xem chi tiết</button>
+    <button type="button" id="add" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm nhân viên</button>
 </form>
 <div id="view" class="d-clear"></div>
 <script>
@@ -24,31 +30,72 @@
         <thead>
         <tr>
             <th>#</td>
-            <th>Tên chi nhánh</th>
-            <th>Địa chỉ</th>
+            <th>Họ và tên</th>
             <th>Điện thoại</th>
+            <th>Email</th>
+            <th>Chức vụ</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
         <% for(i=0; i<data.length; i++) { %>
-        <tr onclick="infobranch('<%= data[i].id %>');">
-            <td><%= data[i].id %></td>
-            <td><%= data[i].name %></td>
-            <td><%= data[i].address %></td>
-            <td class="col-phone"><%= data[i].phone %></td>
+        <tr onclick="infopersonnel('<%= data[i].UserName %>');">
+            <td><%= data[i].UserId %></td>
+            <td><%= data[i].FullName %></td>
+            <td class="col-phone"><%= data[i].Phone %></td>
+            <td class="col-phone"><%= data[i].Email %></td>
+            <td class="col-phone"><%= data[i].NameJurisdiction %></td>
             <td class="col-action">
-                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].email %>';"></i>
-                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].phone %>';"></i>
-                <i class="fa fa-trash ctr-action" onclick="deletebranch('<%= data[i].id %>');" aria-hidden="true"></i>
+                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].Email %>';"></i>
+                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].Phone %>';"></i>
+                <i class="fa fa-trash ctr-action" onclick="deletepersonnel('<%= data[i].UserName %>');" aria-hidden="true"></i>
             </td>
         </tr>
        <% } %>
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="5" id="viewmore" onclick="searchbranch()"><i class="fa fa-angle-double-down" aria-hidden="true"></i> xem thêm ...</td>
+                <td colspan="6" id="viewmore" onclick="searchpersonnel()"><i class="fa fa-angle-double-down" aria-hidden="true"></i> xem thêm ...</td>
             </tr>
         </tfoot>
     </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Thêm nhân viên mới</h4>
+      </div>
+      <div class="modal-body">
+            <form action="#" method="POST" autocomplete="on">
+                <input type="hidden" id="key" name="key" />
+                <input type="text" id="username" class="form-control ctr-1x" name="username" placeholder="(*) Nick name ..." />
+                <input type="text" id="fullname" class="form-control ctr-1x" name="fullname" placeholder="(*) Họ và tên ..." />
+                <input type="text" id="identitycard" class="form-control ctr-1x" name="identitycard" placeholder="(*) CMND/Hộ chiếu ..." />
+                <input type="text" id="address" class="form-control ctr-1x" name="address" placeholder="(*) Địa chỉ liên hệ ..." />
+                <input type="tel" id="phone" class="form-control ctr-1x" name="phone" placeholder="(*) Số điện thoại ..." />
+                <input type="email" id="email" class="form-control ctr-1x" name="email" placeholder="Email ..." />
+                <select id="branch" class="form-control ctr-1x" name="branch" placeholder="(*) Chi nhánh làm việc ...">
+                    <option value="volvo">Chi nhánh 1</option>
+                    <option value="saab">Chi nhánh 2</option>
+                    <option value="mercedes">Chi nhánh 3</option>
+                    <option value="audi">Chi nhánh 4</option>
+                </select>
+                <select id="branch" class="form-control ctr-1x" name="branch" placeholder="(*) Chức vụ nhân viên ...">
+                    <option value="volvo">Chức vụ 1</option>
+                    <option value="saab">Chức vụ 2</option>
+                    <option value="mercedes">Chức vụ 3</option>
+                </select>
+                <input type="text" id="salary" class="form-control ctr-1x" name="salary" placeholder="(*) Tổng lương ..." />
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </div>
+  </div>
 </div>

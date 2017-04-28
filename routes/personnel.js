@@ -2,21 +2,16 @@
 var Personnel = require("../models/personnel.js");
 // Route
 var RoutePersonnel = function(app, pool) {
-    //
-    app.get("/personnel", function(req, res){
-        res.render("home", {screen: 1, data : {}});
-    });
     // Danh sách category mới khởi tạo
     app.get('/personnel', function(req, res){
         var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
         sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
         sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
         sql += "from `admin` "
-        sql += "finner join `user` on `admin`.UserId = `user`.IdUser "
+        sql += "inner join `user` on `admin`.UserId = `user`.IdUser "
         sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
         sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
         sql += "limit 0, 10 ";
-
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {
@@ -36,14 +31,22 @@ var RoutePersonnel = function(app, pool) {
     });
     // Lấy thông tin một danh mục
     app.get('/personnel/:id', function(req, res){
-        var sql = "SELECT * FROM `category` WHERE IdCategory='"+req.params.id+"'";
+        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
+        sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
+        sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
+        sql += "from `admin` "
+        sql += "inner join `user` on `admin`.UserId = `user`.IdUser "
+        sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
+        sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
+        sql += "where UserName = ?";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
+            else connection.query(sql, [req.params.id], function (error, results, fields) {
                     connection.release();
                     if (error) throw error;
                     else if (results.length>0) {
-                        var obj = new Category(results[0].IdCategory, results[0].Name, results[0].Description, results[0].State);
+                        var i = 0;
+                        var obj = new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description)
                         res.send(obj);
                     } else {
                         res.send({});

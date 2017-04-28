@@ -8,7 +8,7 @@ var config = require("./public/files/config-server.js");
 // Khai báo biến môi trường
 var app = express();
 var objCongig = new config();
-var post = process.env.post || 3000;
+var post = process.env.PORT || 3000;
 var host = "localhost";
 var lsAdmin = [];
 
@@ -26,10 +26,10 @@ var pool = mysql.createPool({
     database       : objCongig.dbData
 });
 
-// Cấu hình hệ thống
-app.set("view engine", "ejs");
-app.set("views", "./views");
-app.use(express.static("public"));
+// cau hinh
+app.use(express.static(__dirname + '/public'));
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set('trust proxy', 1) // trust first proxy
