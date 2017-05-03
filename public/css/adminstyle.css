@@ -1,4 +1,10 @@
-
+label.error {
+    color: red;
+    margin-left: 10px;
+}
+input.error {
+    border-color: red;
+}
 /* Màn hình login default */
 img#img-logo {
     max-width: 300px;

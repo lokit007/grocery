@@ -64,40 +64,6 @@ $(document).ready(function(){
         searchbranch();
    });
 });
-// Click item Category and Update
-function updatecategory(e, id) {
-    $("#f-update").show(100);
-    $("#name").focus();
-    var ls = $(e).parent().parent().children();
-    if($(e).prev().hasClass('fa-toggle-off')) {
-        $("#show").removeAttr('checked');
-    } else {
-        $("#show").attr('checked', 'true');
-    }
-    $("#name").val($(ls[0]).text());
-    $("#depiction").val($(ls[2]).text());
-    $("#id").val(id);
-}
-// Click item Category is show/hide
-function showcategory(e, idChange) {
-    var ishow = 0
-    if($(e).hasClass('fa-toggle-off')) ishow = 0;
-    else ishow = 1;
-    $.ajax({
-        url: "/admin/category/update/"+idChange+"/"+ishow,
-        type: "GET",
-        success: function(data){
-            if (data == "OK") {
-                if(ishow == 0) $(e).removeClass('fa-toggle-off').addClass('fa-toggle-on');
-                else $(e).removeClass('fa-toggle-on').addClass('fa-toggle-off');
-            }
-        },
-        error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-        }
-    });
-
-}
 
 // Branch info
 function infobranch(id) {
@@ -396,6 +362,50 @@ function updatecategory(iadd) {
     
 }
 
+// Show Model
+function showmodelpersonnel(sel) {
+    if(sel == 0) {
+        $("#keymodel").val("");
+        $("#usernamemodel").val("");
+        $("#usernamemodel").removeAttr('disabled');
+        $("#fullnamemodel").val("");
+        $("#identitycardmodel").val("");
+        $("#addressmodel").val("");
+        $("#phonemodel").val("");
+        $("#emailmodel").val("");
+        $("#salarymodel").val("");
+        $("#myModalLabel").val("Thêm nhân viên mới");
+        $('#myModal').modal('show');
+    } else {
+        $.ajax({
+            url: "/personnel/" + $("#key").val(),
+            type: "GET",
+            success: function(data){
+                if (data !== undefined) {
+                    $("#keymodel").val(data.UserName);
+                    $("#usernamemodel").val(data.UserName);
+                    $("#usernamemodel").attr('disabled', 'true');
+                    $("#fullnamemodel").val(data.FullName);
+                    $("#identitycardmodel").val(data.IdentityCard);
+                    $("#addressmodel").val(data.Address);
+                    $("#phonemodel").val(data.Phone);
+                    $("#emailmodel").val(data.Email);
+                    $("#salarymodel").val(data.TotalSalary);
+                    $("#br"+data.BranchId).attr('selected', 'selected');
+                    $("#ju"+data.JurisdictionId).attr('selected', 'selected');
+                    $("#myModalLabel").val("Thông tin chi tiết của nhân viên");  
+                    $('#myModal').modal('show');  
+                } else {
+                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                }
+            },
+            error: function(){
+                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            }
+        });
+    }
+    
+}
 // Personnel info
 function infopersonnel(id) {
     $.ajax({
@@ -434,11 +444,11 @@ function searchpersonnel() {
         type: "GET",
         data : {
             index: $('tbody').children('tr').length,
-            name: $("#name").val(),
+            username: $("#username").val(),
+            fullname: $("#fullname").val(),
+            identitycard: $("#identitycard").val(),
             address: $("#address").val(),
-            phone: $("#phone").val(),
-            email: $("#email").val(),
-            fax: $("#fax").val()
+            phone: $("#phone").val()
         },
         success: function(data){
             if (data !== undefined) {
@@ -448,17 +458,18 @@ function searchpersonnel() {
                 if(data.length>0) {
                     var html = "";
                     for(var i=0; i<data.length; i++) {
-                        html += "<tr onclick='infobranch("+ data[i].id +");'>";
-                        html += "<td>"+ data[i].id +"</td>";
-                        html += "<td>"+ data[i].name +"</td>";
-                        html += "<td>"+ data[i].address +"</td>";
-                        html += "<td class='col-phone'>"+ data[i].phone +"</td>";
-                        html += "<td class='col-action'>";
-                        html += "<i class='fa fa-phone-square ctr-action' aria-hidden='true' onclick='window.location.href = 'mailto:"+ data[i].email +"';'></i>";
-                        html += "<i class='fa fa-envelope ctr-action' aria-hidden='true' onclick='window.location.href = 'tel:"+ data[i].phone +"';'></i>";
-                        html += "<i class='fa fa-trash ctr-action' aria-hidden='true'></i>";
-                        html += "</td>"
-                        html += "</tr>"
+                        html += "<tr onclick='infopersonnel('"+data[i].UserName+"');'>"
+                        html += "<td>"+data[i].UserId+"</td>"
+                        html += "<td>"+data[i].FullName+"</td>"
+                        html += "<td class='col-phone'>"+data[i].Phone+"</td>"
+                        html += "<td class='col-phone'>"+data[i].Email+"</td>"
+                        html += "<td class='col-phone'>"+data[i].NameJurisdiction+"</td>"
+                        html += "<td class='col-action'>"
+                        html += "<i class='fa fa-phone-square ctr-action' aria-hidden='true' onclick='window.location.href = 'mailto:"+data[i].Email+"';'></i>"
+                        html += "<i class='fa fa-envelope ctr-action' aria-hidden='true' onclick='window.location.href = 'tel:"+data[i].Phone+"';'></i>"
+                        html += "<i class='fa fa-trash ctr-action' onclick='deletepersonnel('"+data[i].UserName+"');' aria-hidden='true'></i>"
+                        html += "</td>";
+                        html += "</tr>";
                     }
                     $('tbody').append(html);
                 }
@@ -471,14 +482,14 @@ function searchpersonnel() {
 }
 // Personnel delete
 function deletepersonnel(id) {
-    var btn = confirm("Việc xóa chi nhánh ảnh hưởng đến các ràng buộc cơ sở dữ liệu !!!\n Bạn có muốn tiếp tục xóa nó không?");
+    var btn = confirm("Việc xóa nhân viên ảnh hưởng đến các ràng buộc cơ sở dữ liệu !!!\n Bạn có muốn tiếp tục xóa nó không?");
     if(btn === true) {
         $.ajax({
-            url: "/delete/branch/"+id,
+            url: "/delete/personnel/"+id,
             type: "GET",
             success: function(data){
                 if (data === "Success") {
-                    alert("Đã xóa thành công chi nhánh.");
+                    alert("Đã xóa thành công nhân viên.");
                     window.location.reload(true);  
                 } else {
                     alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
@@ -492,72 +503,51 @@ function deletepersonnel(id) {
 }
 // Update Personnel
 function updatepersonnel(iadd) {
-    // Check item null
-    var name = $("#name").val();
-    var address = $("#address").val();
-    var phone = $("#phone").val();
-    if (name == "") {
-        alert("Tên chi nhánh không được để trống!!!");
-        $("#name").focus();
-    } else if(address == "") {
-        alert("Địa chỉ của chi nhánh không được để trống!!!");
-        $("#address").focus();
-    } else if(phone == "") {
-        alert("Nhập số điện thoại chi nhánh !!!");
-        $("#phone").focus();
-    } else {
-        // Check data exist
-        $.ajax({
-            url: "/search/branch",
+    $.ajax({
+            url: "/personnel/"+$("#username").val(),
             type: "GET",
-            data : {
-                index: 0,
-                name: $("#name").val(),
-                address: $("#address").val(),
-                phone: $("#phone").val(),
-                email: $("#email").val(),
-                fax: $("#fax").val()
-            },
             success: function(data){
-                if (data !== undefined) {
-                    if(data.length>0) {
-                        alert("Chi nhánh đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
-                    } else {
-                        // Update data
-                        var idChange = '-1';
-                        if(iadd !== true) {
-                            idChange = $("#key").val();
-                        }
-                        $.ajax({
-                            url: "/update/branch",
-                            type: "POST",
-                            data: {
-                                id: idChange,
-                                name: $("#name").val(),
-                                address: $("#address").val(),
-                                phone: $("#phone").val(),
-                                email: $("#email").val(),
-                                fax: $("#fax").val() 
-                            },
-                            success: function(dataChange){
-                                if (dataChange === "Success") {
-                                    alert("Đã cập nhật thành công chi nhánh.");
-                                    window.location.reload(true);  
-                                } else {
-                                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-                                }
-                            },
-                            error: function(){
+                alert(data);
+                if (data == "{}") {
+                    // Update data
+                    var idChange = '-1';
+                    if(iadd !== true) {
+                        idChange = $("#key").val();
+                    }
+                    $.ajax({
+                        url: "/update/personnel",
+                        type: "POST",
+                        data: {
+                            id: idChange,
+                            username: $("#usernamemodel").val(),
+                            fullname: $("#fullnamemodel").val(),
+                            identitycard: $("#identitycardmodel").val(),
+                            address: $("#addressmodel").val(),
+                            phone: $("#phonemodel").val(),
+                            email: $("#emailmodel").val(),
+                            branch: $("#branchmodel").val(),
+                            jurisdiction: $("#jurisdictionmodel").val(),
+                            salary: $("#salarymodel").val()  
+                        },
+                        success: function(dataChange){
+                            if (dataChange === "Success") {
+                                alert("Đã cập nhật thành công nhân viên.");
+                                window.location.reload(true);  
+                            } else {
                                 alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                             }
-                        });
-                    }
+                        },
+                        error: function(){
+                            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                        }
+                    });    
+                } else {
+                    alert("Nhân viên đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){
                 alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
-        });
-    }
+    });
     
 }
