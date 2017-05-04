@@ -382,8 +382,9 @@ function showmodelpersonnel(sel) {
             type: "GET",
             success: function(data){
                 if (data !== undefined) {
-                    $("#keymodel").val(data.UserName);
+                    $("#keymodel").val(data.UserId);
                     $("#usernamemodel").val(data.UserName);
+                    alert(data.UserName);
                     $("#usernamemodel").attr('disabled', 'true');
                     $("#fullnamemodel").val(data.FullName);
                     $("#identitycardmodel").val(data.IdentityCard);
@@ -507,8 +508,9 @@ function updatepersonnel(iadd) {
             url: "/personnel/"+$("#username").val(),
             type: "GET",
             success: function(data){
-                alert(data);
-                if (data == "{}") {
+                if (data.UserName !== undefined) {
+                    alert("Nhân viên đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
+                } else {
                     // Update data
                     var idChange = '-1';
                     if(iadd !== true) {
@@ -541,8 +543,6 @@ function updatepersonnel(iadd) {
                             alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                         }
                     });    
-                } else {
-                    alert("Nhân viên đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){

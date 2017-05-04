@@ -97,7 +97,7 @@ var RoutePersonnel = function(app, pool) {
         var id = req.body.id;
         var dNow = new Date();
         if (id == '-1') {
-            sql += "INSERT INTO `user` SET ?";
+            sql = "INSERT INTO `user` SET ?";
             obj = {
                 FullName: req.body.fullname,
                 Address: req.body.address,
@@ -105,7 +105,7 @@ var RoutePersonnel = function(app, pool) {
                 Email: req.body.email
             };
         } else {
-            sql += "UPDATE `user` SET FullName = ?, Address = ?, Phone = ?, Email = ? WHERE IdUser = ?";
+            sql = "UPDATE `user` SET FullName = ?, Address = ?, Phone = ?, Email = ? WHERE IdUser = ?";
             obj = [req.body.fullname, req.body.address, req.body.phone, req.body.email, id]
         }
         pool.getConnection(function(err, connection) {
@@ -118,7 +118,7 @@ var RoutePersonnel = function(app, pool) {
                     });
                     // Cập nhật tiếp
                     if (id == '-1') {
-                        sql += "INSERT INTO `admin` SET ?";
+                        sql = "INSERT INTO `admin` SET ?";
                         obj = {
                             UserName: req.body.fullname,
                             PassWord: "12345678",
@@ -129,7 +129,7 @@ var RoutePersonnel = function(app, pool) {
                             TotalSalary: req.body.salary
                         };
                     } else {
-                        sql += "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
+                        sql = "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
                         obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.fullname]
                     }
                     connection.query(sql, obj, function(errorLog, resultLogs){
