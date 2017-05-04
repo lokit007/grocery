@@ -65,6 +65,23 @@ $(document).ready(function(){
    });
 });
 
+// Show Message alert
+function showAlert(tp, tl, ct) {
+    if(tp === "error") {
+        $("#md-div").attr("class", "modal-content modal-error");
+        $("#md-title").attr("class", "fa fa-ban");
+    } else if (tp === "warning") {
+        $("#md-div").attr("class", "modal-content modal-warning");
+        $("#md-title").attr("class", "fa fa-exclamation-triangle");
+    } else {
+        $("#md-div").attr("class", "modal-content modal-success");
+        $("#md-title").attr("class", "fa fa-check-square-o");
+    }
+    $("#md-title").text(tl);
+    $("#md-content").val(ct);
+    $("#mdShowMes").modal('show');
+}
+
 // Branch info
 function infobranch(id) {
     $.ajax({
@@ -365,7 +382,7 @@ function updatecategory(iadd) {
 // Show Model
 function showmodelpersonnel(sel) {
     if(sel == 0) {
-        $("#keymodel").val("");
+        $("#keymodel").val("-1");
         $("#usernamemodel").val("");
         $("#usernamemodel").removeAttr('disabled');
         $("#fullnamemodel").val("");
@@ -384,7 +401,6 @@ function showmodelpersonnel(sel) {
                 if (data !== undefined) {
                     $("#keymodel").val(data.UserId);
                     $("#usernamemodel").val(data.UserName);
-                    alert(data.UserName);
                     $("#usernamemodel").attr('disabled', 'true');
                     $("#fullnamemodel").val(data.FullName);
                     $("#identitycardmodel").val(data.IdentityCard);
@@ -437,6 +453,7 @@ function infopersonnel(id) {
             alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
+    showAlert('error', "Lỗi chi đây", "Nội dung của lỗi");
 }
 // Personnel search
 function searchpersonnel() {
@@ -504,50 +521,36 @@ function deletepersonnel(id) {
 }
 // Update Personnel
 function updatepersonnel(iadd) {
+    // Update data
+    var idChange = '-1';
+    if(iadd !== true) {
+        idChange = $("#keymodel").val();
+    }
     $.ajax({
-            url: "/personnel/"+$("#username").val(),
-            type: "GET",
-            success: function(data){
-                if (data.UserName !== undefined) {
-                    alert("Nhân viên đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
-                } else {
-                    // Update data
-                    var idChange = '-1';
-                    if(iadd !== true) {
-                        idChange = $("#key").val();
-                    }
-                    $.ajax({
-                        url: "/update/personnel",
-                        type: "POST",
-                        data: {
-                            id: idChange,
-                            username: $("#usernamemodel").val(),
-                            fullname: $("#fullnamemodel").val(),
-                            identitycard: $("#identitycardmodel").val(),
-                            address: $("#addressmodel").val(),
-                            phone: $("#phonemodel").val(),
-                            email: $("#emailmodel").val(),
-                            branch: $("#branchmodel").val(),
-                            jurisdiction: $("#jurisdictionmodel").val(),
-                            salary: $("#salarymodel").val()  
-                        },
-                        success: function(dataChange){
-                            if (dataChange === "Success") {
-                                alert("Đã cập nhật thành công nhân viên.");
-                                window.location.reload(true);  
-                            } else {
-                                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-                            }
-                        },
-                        error: function(){
-                            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-                        }
-                    });    
-                }
-            },
-            error: function(){
+        url: "/update/personnel",
+        type: "POST",
+        data: {
+            id: idChange,
+            username: $("#usernamemodel").val(),
+            fullname: $("#fullnamemodel").val(),
+            identitycard: $("#identitycardmodel").val(),
+            address: $("#addressmodel").val(),
+            phone: $("#phonemodel").val(),
+            email: $("#emailmodel").val(),
+            branch: $("#branchmodel").val(),
+            jurisdiction: $("#jurisdictionmodel").val(),
+            salary: $("#salarymodel").val()  
+        },
+        success: function(dataChange){
+            if (dataChange === "Success") {
+                alert("Đã cập nhật thành công nhân viên.");
+                window.location.reload(true);  
+            } else {
                 alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
+        },
+        error: function(){
+            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
     });
-    
 }

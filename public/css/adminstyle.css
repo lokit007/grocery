@@ -5,6 +5,15 @@ label.error {
 input.error {
     border-color: red;
 }
+.modal-error {
+    background-color: #f7c5c5;
+}
+.modal-warning {
+    background-color: #f3d653;
+}
+.modal-success {
+    background-color: #7db9ec;
+}
 /* Màn hình login default */
 img#img-logo {
     max-width: 300px;

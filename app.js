@@ -21,8 +21,8 @@ var pool = mysql.createPool({
     host           : objCongig.dbHost,
     port           : objCongig.dbPost,
     user           : objCongig.dbUser,
-    password       : objCongig.dbPass,
-    // password       : null,
+    // password       : objCongig.dbPass,
+    password       : null,
     database       : objCongig.dbData,
     multipleStatements : true
 });

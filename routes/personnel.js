@@ -120,7 +120,7 @@ var RoutePersonnel = function(app, pool) {
                     if (id == '-1') {
                         sql = "INSERT INTO `admin` SET ?";
                         obj = {
-                            UserName: req.body.fullname,
+                            UserName: req.body.username,
                             PassWord: "12345678",
                             UserId: results.insertId,
                             BranchId: req.body.branch,
@@ -130,7 +130,7 @@ var RoutePersonnel = function(app, pool) {
                         };
                     } else {
                         sql = "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
-                        obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.fullname]
+                        obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.username]
                     }
                     connection.query(sql, obj, function(errorLog, resultLogs){
                         if(errorLog) connection.rollback(function(){

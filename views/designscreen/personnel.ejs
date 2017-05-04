@@ -154,7 +154,10 @@
             },
             submitHandler : function(form) {
                 // form.submit();
-                updatepersonnel(true);
+                if($("#keymodel").val() == "-1")
+                    updatepersonnel(true);
+                else
+                    updatepersonnel(false);
             }
         });    
     });
