@@ -1,10 +1,13 @@
 // Model
-var Branch = require("../models/branch.js");
+var Partner = require("../models/partner.js");
 // Định nghĩa route
-var RouteBranch = function(app, pool) {
-    // Danh sách branch mới khởi tạo
-    app.get('/branch', function(req, res){
-        var sql = "SELECT * FROM `branch` order by IdBranch LIMIT 0, 10";
+var RoutePartner = function(app, pool) {
+    // Danh sách category mới khởi tạo
+    app.get('/partner', function(req, res){
+        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
+        sql += "from `supplier` inner join `user` on UserId = IdUser "
+        sql += "where ContactName like N'%' and ContactPhone like '%' and ContactEmail like '%' and Address like '%' "
+        sql += "limit 0, 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {
@@ -13,25 +16,28 @@ var RouteBranch = function(app, pool) {
                     else if (results.length>0) {
                         var objList = [];
                         for(var i=0; i<results.length; i++) {
-                            objList.push(new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax));
+                            objList.push(new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId));
                         }
-                        res.render("home", {screen: 0, data : objList});
+                        res.render("home", {screen: 2, data : objList});
                     } else {
-                        res.render("home", {screen: 0, data : {}});
+                        res.render("home", {screen: 2, data : {}});
                     }
                 });
         }); 
     });
-    // Lấy thông tin một chi nhánh
-    app.get('/branch/:id', function(req, res){
-        var sql = "SELECT * FROM `branch` WHERE IdBranch=?";
+    // Lấy thông tin một danh mục
+    app.get('/partner/:id', function(req, res){
+        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
+        sql += "from `supplier` inner join `user` on UserId = IdUser ";
+        sql += "where IdSupplier = ? ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, [req.params.id], function (error, results, fields) {
                     connection.release();
                     if (error) throw error;
                     else if (results.length>0) {
-                        var obj = new Branch(results[0].IdBranch, results[0].NameBranch, results[0].Address, results[0].Phone, results[0].Email, results[0].Fax);
+                        var i = 0;
+                        var obj = new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId);
                         res.send(obj);
                     } else {
                         res.send({});
@@ -39,58 +45,47 @@ var RouteBranch = function(app, pool) {
                 });
         });
     });
-    // Lấy danh sách chi nhánh tìm kiếm autocomplex
-    app.get('/search/branch', function(req, res){
-        var sql = "SELECT * FROM `branch` ";
-        sql += "WHERE NameBranch LIKE N? "
-        sql += "AND Address LIKE N? "
-        sql += "AND Phone LIKE ? "
-        sql += "AND (Email LIKE ? OR Email is null)"
-        sql += "AND (Fax LIKE ? OR Fax is null)"
-        sql += "order by IdBranch LIMIT ?, 10";
-        var params = [
-            "%" + req.query.name + "%",
-            "%" + req.query.address + "%",
-            "%" + req.query.phone + "%",
-            "%" + req.query.email + "%",
-            "%" + req.query.fax + "%",
-            parseInt(req.query.index)
-        ]
+    // Lấy danh sách danh mục tìm kiếm autocomplex
+    app.get('/search/partner', function(req, res){
+        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
+        sql += "from `supplier` inner join `user` on UserId = IdUser ";
+        sql += "where ContactName like N? and ContactPhone like ? and ContactEmail like ? and Address like N? ";
+        sql += "limit ?, 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, params, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax));
-                        }
-                        res.send(objList);
-                    } else {
-                        res.send([]);
+            else connection.query(sql, ["%"+req.query.name+"%", parseInt(req.query.index)], function (error, results, fields) {
+                connection.release();
+                if (error) throw error;
+                else if (results.length>0) {
+                    var objList = [];
+                    for(var i=0; i<results.length; i++) {
+                        objList.push(new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId));
                     }
-                });
+                    res.send(objList);
+                } else {
+                    res.send([]);
+                }
+            });
         }); 
     });
-    // Thêm, cập nhật một branch
-    app.post('/update/branch', function(req, res){
+    // Thêm, cập nhật một category
+    app.post('/update/partner', function(req, res){
         var sql = "";
         var obj = {};
         var id = req.body.id;
+        var dNow = new Date();
         if (id == '-1') {
-            sql += "INSERT INTO `branch` SET ?";
+            sql += "INSERT INTO `category` SET ?";
             obj = {
-                NameBranch: req.body.name,
-                Address: req.body.address,
-                Phone: req.body.phone,
-                Email: req.body.email,
-                Fax: req.body.fax
+                Name: req.body.name,
+                Description: req.body.description,
+                DateCreate: dNow.toLocaleString(),
+                State: 0
             }
             console.log('add ');
         } else {
-            sql += "UPDATE `branch` SET NameBranch = ?, Address = ?, Phone = ?, Email = ?, Fax = ? WHERE IdBranch = ?";
-            obj = [req.body.name, req.body.address, req.body.phone, req.body.email, req.body.fax, id]
+            sql += "UPDATE `category` SET Name = ?, Description = ? WHERE IdCategory = ?";
+            obj = [req.body.name, req.body.description, id]
             console.log('update ');
         }
         pool.getConnection(function(err, connection) {
@@ -102,7 +97,6 @@ var RouteBranch = function(app, pool) {
                         throw error;
                     });
                     // Cập nhật Log liên quan đến thay đổi csdl
-                    var dNow = new Date();
                     var insertLog = "INSERT INTO `log` SET ?";
                     var objLog = {
                         SqlAction: sql,
@@ -130,9 +124,9 @@ var RouteBranch = function(app, pool) {
             });
         });
     });
-    // Xóa branch
-    app.get('/delete/branch/:id', function(req, res){
-        var sql = "DELETE FROM `branch` WHERE IdBranch=?";
+    // Xóa category
+    app.get('/delete/partner/:id', function(req, res){
+        var sql = "DELETE FROM `category` WHERE IdCategory=?";
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
@@ -142,7 +136,7 @@ var RouteBranch = function(app, pool) {
                         throw error;
                     });
                     // Xóa dữ liệu có liên quan
-                    var sqlDelRel = "DELETE FROM `depot` WHERE BranchId=?";
+                    var sqlDelRel = "DELETE FROM `product` WHERE CategoryId=?";
                     connection.query(sqlDelRel, [req.params.id], function(errorRel, resultRels){
                         if(errorRel) connection.rollback(function(){
                             res.send("Erorr");
@@ -154,7 +148,7 @@ var RouteBranch = function(app, pool) {
                     var insertLog = "INSERT INTO `log` SET ?";
                     var objLog = {
                         SqlAction: sql,
-                        NoteAction: "Delete Branch, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
+                        NoteAction: "Delete Category, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
                         Action: "Delete",
                         DateCreate: dNow.toLocaleString(),
                         AdminId: "root",
@@ -180,4 +174,4 @@ var RouteBranch = function(app, pool) {
     });
 }
 
-module.exports = RouteBranch;
+module.exports = RoutePartner;

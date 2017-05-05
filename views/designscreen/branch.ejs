@@ -1,14 +1,23 @@
 <strong id="tittle">Thông tin chi nhánh</strong>
-<form action="#" method="POST" autocomplete="on">
-    <input type="hidden" id="key" name="key" />
+<form action="#" name='f-update' method="POST" autocomplete="on">
+    <input type="hidden" id="key" name="key" value="-1" />
     <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." />
     <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." />
-    <input type="tel" id="phone" class="form-control ctr-3x" name="phonebranch" placeholder="(*) Số điện thoại ..." />
-    <input type="email" id="email" class="form-control ctr-3x" name="emailbranch" placeholder="Email ..." />
-    <input type="text" id="fax" class="form-control ctr-3x" name="faxbranch" placeholder="Số fax ..." />
+    <div>
+        <div class="ctr-3x">
+            <input type="tel" id="phone" class="form-control" name="phonebranch" placeholder="(*) Số điện thoại ..." />
+        </div>
+        <div class="ctr-3x">
+            <input type="email" id="email" class="form-control" name="emailbranch" placeholder="Email ..." />
+        </div>
+        <div class="ctr-3x">
+            <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." />
+        </div>    
+        <div class="d-clear"></div>
+    </div>
     <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
-    <button type="button" id="update" onclick="updatebranch(false);" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
-    <button type="button" id="add" onclick="updatebranch(true);" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
+    <button type="submit" id="update" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="submit" id="add" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
 </form>
 <div id="view" class="d-clear"></div>
 <script>
@@ -16,6 +25,39 @@
         $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
         $(window).resize(function(){
             $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+        });
+        $("#add").click(function(){
+            $("#key").val("-1");
+        });
+        // check validate
+        $("form[name='f-update']").validate({
+            rules : {
+                namebranch: "required",
+                addressbranch: 'required',
+                phonebranch: {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 20,
+                }
+            },
+            messages : {
+                namebranch: 'Bạn chưa nhập dữ liệu cho trường này!',
+                addressbranch: 'Bạn chưa nhập dữ liệu cho trường này!',
+                phonebranch: {
+                    required: "Bạn chưa nhập dữ liệu cho trường này!",
+                    digits: "Hãy nhập số điện thoại!",
+                    minlength: "Hãy nhập số điện thoại!",
+                    maxlength: "Hãy nhập số điện thoại!",
+                }
+            },
+            submitHandler : function(form) {
+                // form.submit();
+                if($("#key").val() == "-1")
+                    updatebranch(true);
+                else
+                    updatebranch(false);
+            }
         });
     });
 </script>

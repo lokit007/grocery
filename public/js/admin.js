@@ -104,7 +104,7 @@ function infobranch(id) {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
@@ -146,7 +146,7 @@ function searchbranch() {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
@@ -162,11 +162,11 @@ function deletebranch(id) {
                     alert("Đã xóa thành công chi nhánh.");
                     window.location.reload(true);  
                 } else {
-                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -202,7 +202,7 @@ function updatebranch(iadd) {
             success: function(data){
                 if (data !== undefined) {
                     if(data.length>0) {
-                        alert("Chi nhánh đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
+                        showAlert('error', " Lỗi ràng buộc dữ liệu hệ thống", "Chi nhánh đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
                     } else {
                         // Update data
                         var idChange = '-1';
@@ -225,18 +225,18 @@ function updatebranch(iadd) {
                                     alert("Đã cập nhật thành công chi nhánh.");
                                     window.location.reload(true);  
                                 } else {
-                                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                                 }
                             },
                             error: function(){
-                                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                             }
                         });
                     }
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -262,7 +262,7 @@ function infocategory(id) {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
@@ -297,7 +297,7 @@ function searchcategory() {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
@@ -313,11 +313,11 @@ function deletecategory(id) {
                     alert("Đã xóa thành công danh mục.");
                     window.location.reload(true);  
                 } else {
-                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -341,7 +341,7 @@ function updatecategory(iadd) {
             success: function(data){
                 if (data !== undefined) {
                     if(data.length>0) {
-                        alert("Danh mục đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
+                        showAlert('error', " Lỗi ràng buộc dữ liệu hệ thống", "Danh mục đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
                     } else {
                         // Update data
                         var idChange = '-1';
@@ -361,18 +361,18 @@ function updatecategory(iadd) {
                                     alert("Đã cập nhật thành công danh mục.");
                                     window.location.reload(true);  
                                 } else {
-                                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                                 }
                             },
                             error: function(){
-                                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                             }
                         });
                     }
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -413,11 +413,11 @@ function showmodelpersonnel(sel) {
                     $("#myModalLabel").val("Thông tin chi tiết của nhân viên");  
                     $('#myModal').modal('show');  
                 } else {
-                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -450,10 +450,9 @@ function infopersonnel(id) {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
-    showAlert('error', "Lỗi chi đây", "Nội dung của lỗi");
 }
 // Personnel search
 function searchpersonnel() {
@@ -494,7 +493,7 @@ function searchpersonnel() {
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
@@ -510,11 +509,11 @@ function deletepersonnel(id) {
                     alert("Đã xóa thành công nhân viên.");
                     window.location.reload(true);  
                 } else {
-                    alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
             },
             error: function(){
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
     }
@@ -546,11 +545,11 @@ function updatepersonnel(iadd) {
                 alert("Đã cập nhật thành công nhân viên.");
                 window.location.reload(true);  
             } else {
-                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         },
         error: function(){
-            alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
 }
