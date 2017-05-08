@@ -5,8 +5,7 @@ var RoutePartner = function(app, pool) {
     // Danh sách category mới khởi tạo
     app.get('/partner', function(req, res){
         var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
-        sql += "from `supplier` inner join `user` on UserId = IdUser "
-        sql += "where ContactName like N'%' and ContactPhone like '%' and ContactEmail like '%' and Address like '%' "
+        sql += "from `supplier` inner join `user` on UserId = IdUser ";
         sql += "limit 0, 10 ";
         pool.getConnection(function(err, connection) {
             if (err) throw err;
@@ -18,9 +17,9 @@ var RoutePartner = function(app, pool) {
                         for(var i=0; i<results.length; i++) {
                             objList.push(new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId));
                         }
-                        res.render("home", {screen: 2, data : objList});
+                        res.render("home", {screen: 3, data : objList});
                     } else {
-                        res.render("home", {screen: 2, data : {}});
+                        res.render("home", {screen: 3, data : {}});
                     }
                 });
         }); 

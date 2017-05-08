@@ -90,3 +90,4 @@ app.get("/logout", function(req, res){
 var routeBranch = require("./routes/branch.js")(app, pool);
 var routeCategory = require("./routes/category.js")(app, pool);
 var routeCategory = require("./routes/personnel.js")(app, pool);
+var routeCategory = require("./routes/partner.js")(app, pool);

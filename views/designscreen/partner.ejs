@@ -1,0 +1,165 @@
+<strong id="tittle">Chi tiết đối tác</strong>
+<form action="#" method="POST" autocomplete="on">
+    <input type="hidden" id="key" name="key" value="-1" />
+    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Đối tác ..." />
+    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." />
+    <div>
+        <div class="ctr-3x">
+            <input type="tel" id="phone" class="form-control" name="phonebranch" placeholder="(*) Số điện thoại ..." />
+        </div>
+        <div class="ctr-3x">
+            <input type="email" id="email" class="form-control" name="emailbranch" placeholder="Email ..." />
+        </div>
+        <div class="ctr-3x">
+            <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." />
+        </div>    
+        <div class="d-clear"></div>
+    </div>
+    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
+    <button type="submit" id="update" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="submit" id="add" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm Chi nhánh</button>
+</form>
+<div id="view" class="d-clear"></div>
+<script>
+    $(document).ready(function(){
+        $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+        $(window).resize(function(){
+            $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+        });
+    });
+</script>
+<div class="table-responsive d-table" id="d-fixheight">
+    <table class="table table-hover table-condensed table-striped">
+        <thead>
+        <tr>
+            <th>#</td>
+            <th>Đối tác</th>
+            <th>Điện thoại</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for(i=0; i<data.length; i++) { %>
+        <tr onclick="infopersonnel('<%= data[i].UserName %>');">
+            <td><%= data[i].UserId %></td>
+            <td><%= data[i].FullName %></td>
+            <td class="col-phone"><%= data[i].Phone %></td>
+            <td class="col-phone"><%= data[i].Email %></td>
+            <td class="col-action">
+                <i class="fa fa-phone-square ctr-action" aria-hidden="true" onclick="window.location.href = 'mailto:<%= data[i].Email %>';"></i>
+                <i class="fa fa-envelope ctr-action" aria-hidden="true" onclick="window.location.href = 'tel:<%= data[i].Phone %>';"></i>
+                <i class="fa fa-trash ctr-action" onclick="deletepersonnel('<%= data[i].UserName %>');" aria-hidden="true"></i>
+            </td>
+        </tr>
+       <% } %>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" id="viewmore" onclick="searchpersonnel()"><i class="fa fa-angle-double-down" aria-hidden="true"></i> xem thêm ...</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Thêm nhân viên mới</h4>
+      </div>
+      <div class="modal-body">
+            <form action="/update/personnel" id="f-update" name="f-update" method="POST" autocomplete="on">
+                <input type="hidden" id="keymodel" name="key" />
+                <input type="text" id="usernamemodel" class="form-control ctr-1x" name="username" placeholder="(*) Nick name ..." />
+                <input type="text" id="fullnamemodel" class="form-control ctr-1x" name="fullname" placeholder="(*) Họ và tên ..." />
+                <input type="text" id="identitycardmodel" class="form-control ctr-1x" name="identitycard" placeholder="(*) CMND/Hộ chiếu ..." />
+                <input type="text" id="addressmodel" class="form-control ctr-1x" name="address" placeholder="(*) Địa chỉ liên hệ ..." />
+                <input type="tel" id="phonemodel" class="form-control ctr-1x" name="phone" placeholder="(*) Số điện thoại ..." />
+                <input type="email" id="emailmodel" class="form-control ctr-1x" name="email" placeholder="Email ..." />
+                <select id="branchmodel" class="form-control ctr-1x" name="branch" placeholder="(*) Chi nhánh làm việc ..."></select>
+                <select id="jurisdictionmodel" class="form-control ctr-1x" name="jurisdiction" placeholder="(*) Chức vụ nhân viên ..."></select>
+                <input type="text" id="salarymodel" class="form-control ctr-1x" name="salary" placeholder="(*) Tổng lương ..." />
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+        <button type="button" onclick="$('#f-update').submit();" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: "/loaddata/jurisdiction",
+            type: "GET",
+            data: {
+                ops: 1
+            },
+            success: function(data){
+                if(data.length>0) {
+                    var html = "";
+                    for(var i=0; i<data[0].length; i++) {
+                        html += "<option id='ju"+data[0][i].IdJurisdiction+"' value='"+data[0][i].IdJurisdiction+"'>"+data[0][i].Name+"</option>";
+                    }
+                    $('#jurisdictionmodel').append(html);
+                    html = "";
+                    for(var i=0; i<data[1].length; i++) {
+                        html += "<option id='br"+data[1][i].IdBranch+"' value='"+data[1][i].IdBranch+"'>"+data[1][i].NameBranch+"</option>";
+                    }
+                    $('#branchmodel').append(html);
+                }
+            },
+            error: function(){
+                alert("Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                }
+            });
+        
+        $("form[name='f-update']").validate({
+            rules : {
+                username: "required",
+                fullname: 'required',
+                identitycard: 'required',
+                address: 'required',
+                phone: {
+                    required: true,
+                    digits: true,
+                    minlength: 10,
+                    maxlength: 20,
+                },
+                email: 'email',
+                salary: {
+                    required: true,
+                    digits: true
+                }
+            },
+            messages : {
+                username: 'Bạn chưa nhập dữ liệu cho trường này!',
+                fullname: 'Bạn chưa nhập dữ liệu cho trường này!',
+                identitycard: 'Bạn chưa nhập dữ liệu cho trường này!',
+                address: 'Bạn chưa nhập dữ liệu cho trường này!',
+                phone: {
+                    required: "Bạn chưa nhập dữ liệu cho trường này!",
+                    digits: "Hãy nhập số điện thoại!",
+                    minlength: "Hãy nhập số điện thoại!",
+                    maxlength: "Hãy nhập số điện thoại!",
+                },
+                email: 'Hãy nhập định dạng email!',
+                salary: {
+                    required: "Bạn chưa nhập dữ liệu cho trường này!",
+                    digits: "Lương là một số nguyên!"
+                }
+            },
+            submitHandler : function(form) {
+                // form.submit();
+                if($("#keymodel").val() == "-1")
+                    updatepersonnel(true);
+                else
+                    updatepersonnel(false);
+            }
+        });    
+    });
+</script>
