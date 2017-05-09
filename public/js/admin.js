@@ -553,3 +553,168 @@ function updatepersonnel(iadd) {
         }
     });
 }
+
+// partner
+// Show Model
+function showmodelpartner(sel) {
+    if(sel == 0) {
+        $("#keymodel").val("-1");
+        $("#usernamemodel").val("");
+        $("#usernamemodel").removeAttr('disabled');
+        $("#fullnamemodel").val("");
+        $("#identitycardmodel").val("");
+        $("#addressmodel").val("");
+        $("#phonemodel").val("");
+        $("#emailmodel").val("");
+        $("#salarymodel").val("");
+        $("#myModalLabel").val("Thêm nhân viên mới");
+        $('#myModal').modal('show');
+    } else {
+        $.ajax({
+            url: "/personnel/" + $("#key").val(),
+            type: "GET",
+            success: function(data){
+                if (data !== undefined) {
+                    $("#keymodel").val(data.UserId);
+                    $("#usernamemodel").val(data.UserName);
+                    $("#usernamemodel").attr('disabled', 'true');
+                    $("#fullnamemodel").val(data.FullName);
+                    $("#identitycardmodel").val(data.IdentityCard);
+                    $("#addressmodel").val(data.Address);
+                    $("#phonemodel").val(data.Phone);
+                    $("#emailmodel").val(data.Email);
+                    $("#salarymodel").val(data.TotalSalary);
+                    $("#br"+data.BranchId).attr('selected', 'selected');
+                    $("#ju"+data.JurisdictionId).attr('selected', 'selected');
+                    $("#myModalLabel").val("Thông tin chi tiết của nhân viên");  
+                    $('#myModal').modal('show');  
+                } else {
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                }
+            },
+            error: function(){
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            }
+        });
+    }
+    
+}
+// Partner info
+function infopartner(id) {
+    $.ajax({
+        url: "/partner/"+id,
+        type: "GET",
+        success: function(data){
+            if (data !== undefined) {
+                $("#key").val(data.Id);
+                $("#name").val(data.Name);
+                $("#address").val(data.Address);
+                $("#phone").val(data.Phone);
+                $("#email").val(data.Email);
+                $("#delegate").val(data.Delegate); 
+                $("#update").removeAttr('disabled');
+                $("#delete").removeAttr('disabled');
+                $("#delete").attr('onclick', "deletepartner("+data.UserId+");");
+            } else {
+                $("#update").attr('disabled', 'true');
+                $("#delete").attr('disabled', 'true');
+            }
+        },
+        error: function(){
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
+}
+// Partner search
+function searchpartner() {
+    $.ajax({
+        url: "/search/partner",
+        type: "GET",
+        data : {
+            index: $('tbody').children('tr').length,
+            name: $("#name").val(),
+            email: $("#email").val(),
+            address: $("#address").val(),
+            phone: $("#phone").val()
+        },
+        success: function(data){
+            if (data !== undefined) {
+                if(data.length<10) {
+                    $("#viewmore").hide();
+                }
+                if(data.length>0) {
+                    var html = "";
+                    for(var i=0; i<data.length; i++) {
+                        html += "<tr onclick='infopartner('"+data[i].Id+"');'>"
+                        html += "<td>"+data[i].Id+"</td>"
+                        html += "<td>"+data[i].Name+"</td>"
+                        html += "<td class='col-phone'>"+data[i].Phone+"</td>"
+                        html += "<td class='col-phone'>"+data[i].Email+"</td>"
+                        html += "<td class='col-action'>"
+                        html += "<i class='fa fa-phone-square ctr-action' aria-hidden='true' onclick='window.location.href = 'mailto:"+data[i].Email+"';'></i>"
+                        html += "<i class='fa fa-envelope ctr-action' aria-hidden='true' onclick='window.location.href = 'tel:"+data[i].Phone+"';'></i>"
+                        html += "<i class='fa fa-trash ctr-action' onclick='deletepersonnel('"+data[i].UserId+"');' aria-hidden='true'></i>"
+                        html += "</td>";
+                        html += "</tr>";
+                    }
+                    $('tbody').append(html);
+                }
+            }
+        },
+        error: function(){
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
+}
+// Partner delete
+function deletepartner(id) {
+    var btn = confirm("Việc xóa đối tác có thể ảnh hưởng đến các ràng buộc cơ sở dữ liệu !!!\n Bạn có muốn tiếp tục xóa nó không?");
+    if(btn === true) {
+        $.ajax({
+            url: "/delete/partner/"+id,
+            type: "GET",
+            success: function(data){
+                if (data === "Success") {
+                    alert("Đã xóa thành công đối tác.");
+                    window.location.reload(true);  
+                } else {
+                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                }
+            },
+            error: function(){
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            }
+        });
+    }
+}
+// Update Partner
+function updatepartner(iadd) {
+    // Update data
+    var idChange = '-1';
+    if(iadd !== true) {
+        idChange = $("#key").val();
+    }
+    $.ajax({
+        url: "/update/partner",
+        type: "POST",
+        data: {
+            id: idChange,
+            name: $("#name").val(),
+            address: $("#address").val(),
+            phone: $("#phone").val(),
+            email: $("#email").val(),
+            delegate: $("#delegate").val()
+        },
+        success: function(dataChange){
+            if (dataChange === "Success") {
+                alert("Đã cập nhật đối tác thành công.");
+                window.location.reload(true);  
+            } else {
+                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+            }
+        },
+        error: function(){
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
+}

@@ -2,7 +2,7 @@
 var Partner = require("../models/partner.js");
 // Định nghĩa route
 var RoutePartner = function(app, pool) {
-    // Danh sách category mới khởi tạo
+    // Danh sách khởi tạo
     app.get('/partner', function(req, res){
         var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
         sql += "from `supplier` inner join `user` on UserId = IdUser ";
@@ -24,9 +24,9 @@ var RoutePartner = function(app, pool) {
                 });
         }); 
     });
-    // Lấy thông tin một danh mục
+    // Thông tin chi tiết
     app.get('/partner/:id', function(req, res){
-        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
+        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId, FullName ";
         sql += "from `supplier` inner join `user` on UserId = IdUser ";
         sql += "where IdSupplier = ? ";
         pool.getConnection(function(err, connection) {
@@ -36,7 +36,7 @@ var RoutePartner = function(app, pool) {
                     if (error) throw error;
                     else if (results.length>0) {
                         var i = 0;
-                        var obj = new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId);
+                        var obj = new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId, results[i].FullName);
                         res.send(obj);
                     } else {
                         res.send({});
@@ -44,21 +44,28 @@ var RoutePartner = function(app, pool) {
                 });
         });
     });
-    // Lấy danh sách danh mục tìm kiếm autocomplex
+    // Danh sách tìm kiếm
     app.get('/search/partner', function(req, res){
-        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId ";
+        var sql = "select IdSupplier, ContactName, ContactPhone, ContactEmail, Address, UserId, FullName ";
         sql += "from `supplier` inner join `user` on UserId = IdUser ";
         sql += "where ContactName like N? and ContactPhone like ? and ContactEmail like ? and Address like N? ";
         sql += "limit ?, 10 ";
+        var param = [
+             "%"+req.query.name+"%", 
+             "%"+req.query.phone+"%", 
+             "%"+req.query.email+"%", 
+             "%"+req.query.address+"%", 
+             parseInt(req.query.index)
+        ]
         pool.getConnection(function(err, connection) {
             if (err) throw err;
-            else connection.query(sql, ["%"+req.query.name+"%", parseInt(req.query.index)], function (error, results, fields) {
+            else connection.query(sql, param, function (error, results, fields) {
                 connection.release();
                 if (error) throw error;
                 else if (results.length>0) {
                     var objList = [];
                     for(var i=0; i<results.length; i++) {
-                        objList.push(new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId));
+                        objList.push(new Partner(results[i].IdSupplier, results[i].ContactName, results[i].ContactPhone, results[i].ContactEmail, results[i].Address, results[i].UserId, results[i].FullName));
                     }
                     res.send(objList);
                 } else {
@@ -67,25 +74,23 @@ var RoutePartner = function(app, pool) {
             });
         }); 
     });
-    // Thêm, cập nhật một category
+    // Cập nhật dữ liệu
     app.post('/update/partner', function(req, res){
         var sql = "";
         var obj = {};
         var id = req.body.id;
         var dNow = new Date();
         if (id == '-1') {
-            sql += "INSERT INTO `category` SET ?";
+            sql = "INSERT INTO `user` SET ?";
             obj = {
-                Name: req.body.name,
-                Description: req.body.description,
-                DateCreate: dNow.toLocaleString(),
-                State: 0
-            }
-            console.log('add ');
+                FullName: req.body.delegate,
+                Address: req.body.address,
+                Phone: req.body.phone,
+                Email: req.body.email
+            };
         } else {
-            sql += "UPDATE `category` SET Name = ?, Description = ? WHERE IdCategory = ?";
-            obj = [req.body.name, req.body.description, id]
-            console.log('update ');
+            sql = "UPDATE `user` SET FullName = ?, Address = ?, Phone = ?, Email = ? WHERE IdUser = ?";
+            obj = [req.body.delegate, req.body.address, req.body.phone, req.body.email, id]
         }
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
@@ -95,17 +100,20 @@ var RoutePartner = function(app, pool) {
                         res.send("Erorr");
                         throw error;
                     });
-                    // Cập nhật Log liên quan đến thay đổi csdl
-                    var insertLog = "INSERT INTO `log` SET ?";
-                    var objLog = {
-                        SqlAction: sql,
-                        NoteAction: "Update Branch, State : Success" ,
-                        Action: "Update",
-                        DateCreate: dNow.toLocaleString(),
-                        AdminId: "root",
-                        StateAction: "0"
+                    // Cập nhật tiếp
+                    if (id == '-1') {
+                        sql = "INSERT INTO `supplier` SET ?";
+                        obj = {
+                            ContactName: req.body.name,
+                            ContactPhone: req.body.phone,
+                            ContactEmail: req.body.email,
+                            UserId: results.insertId
+                        };
+                    } else {
+                        sql = "UPDATE `supplier` SET ContactName = ?, ContactPhone = ?, ContactEmail = ? WHERE IdSupplier = ?";
+                        obj = [req.body.name, req.body.phone, req.body.email, id]
                     }
-                    connection.query(insertLog, objLog, function(errorLog, resultLogs){
+                    connection.query(sql, obj, function(errorLog, resultLogs){
                         if(errorLog) connection.rollback(function(){
                             res.send("Erorr");
                             throw errorLog;
@@ -123,9 +131,9 @@ var RoutePartner = function(app, pool) {
             });
         });
     });
-    // Xóa category
+    // Xóa dữ liệu
     app.get('/delete/partner/:id', function(req, res){
-        var sql = "DELETE FROM `category` WHERE IdCategory=?";
+        var sql = "DELETE FROM `user` WHERE IdUser=?";
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
@@ -135,25 +143,8 @@ var RoutePartner = function(app, pool) {
                         throw error;
                     });
                     // Xóa dữ liệu có liên quan
-                    var sqlDelRel = "DELETE FROM `product` WHERE CategoryId=?";
-                    connection.query(sqlDelRel, [req.params.id], function(errorRel, resultRels){
-                        if(errorRel) connection.rollback(function(){
-                            res.send("Erorr");
-                            throw errorRel;
-                        });
-                    });
-                    // Cập nhật Log liên quan đến thay đổi csdl
-                    var dNow = new Date();
-                    var insertLog = "INSERT INTO `log` SET ?";
-                    var objLog = {
-                        SqlAction: sql,
-                        NoteAction: "Delete Category, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
-                        Action: "Delete",
-                        DateCreate: dNow.toLocaleString(),
-                        AdminId: "root",
-                        StateAction: "0"
-                    }
-                    connection.query(insertLog, objLog, function(errorLog, resultLogs){
+                    var sqlDelRel = "DELETE FROM `supplier` WHERE UserId=?";
+                    connection.query(sqlDelRel, [req.params.id], function(errorLog, resultLogs){
                         if(errorLog) connection.rollback(function(){
                             res.send("Erorr");
                             throw errorLog;
