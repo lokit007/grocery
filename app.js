@@ -87,7 +87,15 @@ app.get("/logout", function(req, res){
     res.render("login", { 'meserr' : "" });
 })
 
+// Error
+app.on("error", function(req, res){
+  res.status(404);
+  res.render("error");
+});
+
+// Route
 var routeBranch = require("./routes/branch.js")(app, pool);
 var routeCategory = require("./routes/category.js")(app, pool);
 var routeCategory = require("./routes/personnel.js")(app, pool);
 var routeCategory = require("./routes/partner.js")(app, pool);
+var routeCategory = require("./routes/warehouse.js")(app, pool);

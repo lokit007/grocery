@@ -606,7 +606,7 @@ function infopartner(id) {
         type: "GET",
         success: function(data){
             if (data !== undefined) {
-                $("#key").val(data.Id);
+                $("#key").val(data.UserId);
                 $("#name").val(data.Name);
                 $("#address").val(data.Address);
                 $("#phone").val(data.Phone);
