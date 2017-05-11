@@ -4,13 +4,12 @@ var Warehouse = require("../models/warehouse.js");
 var RouteWarehouse = function(app, pool) {
     // Mới khởi tạo
     app.get('/warehouse', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
-        sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
-        sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
-        sql += "from `admin` "
-        sql += "inner join `user` on `admin`.UserId = `user`.IdUser "
-        sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
-        sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
+        var sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
+        sql += "Price, NewNumber, NewPrice, OldNumber, OldPrice, ";
+        sql += "CategoryId, `category`.Name as CategoryName from depot ";
+        sql += "inner join `product` on ProductId = IdProduct ";
+        sql += "inner join `branch` on BranchId = IdBranch ";
+        sql += "inner join `category` on CategoryId = IdCategory ";
         sql += "limit 0, 10 ";
         try {
             pool.getConnection(function(err, connection) {
@@ -21,7 +20,7 @@ var RouteWarehouse = function(app, pool) {
                     else if (results.length>0) {
                         var objList = [];
                         for(var i=0; i<results.length; i++) {
-                            objList.push(new Warehouse(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
+                            objList.push(new Warehouse(results[i].BranchId, results[i].BranchName, results[i].ProductId, results[i].ProductName, results[i].Price, results[i].NewNumber, results[i].NewPrice, results[i].OldNumber, results[i].OldPrice, results[i].CategoryId, results[i].CategoryName));
                         }
                         res.render("home", {screen: 4, data : objList});
                     } else {
@@ -196,8 +195,10 @@ var RouteWarehouse = function(app, pool) {
     });
     // Load data
     app.get('/loaddata/warehouse', function(req, res) {
-        var sql = "select * from jurisdiction; ";
-        sql += " select * from branch";
+        var sql = "select * from branch; ";
+        sql += " select * from category; ";
+        sql += " select * from supplier ";
+        
         pool.getConnection(function(err, connection) {
             if (err) throw err;
             else connection.query(sql, function (error, results, fields) {

@@ -178,6 +178,12 @@ td#viewmore {
     text-align: center;
     font-weight: bold;
 }
+/* Man hinh warehouse - Kho hang */
+button#add-head {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
 
 /* Man hinh dien thoai */
 @media all and (max-width: 599px) {
