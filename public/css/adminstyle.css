@@ -179,7 +179,7 @@ td#viewmore {
     font-weight: bold;
 }
 /* Man hinh warehouse - Kho hang */
-button#add-head {
+#add-head {
     position: absolute;
     right: 0px;
     top: 0px;

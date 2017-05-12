@@ -1,5 +1,13 @@
 <strong id="tittle">Kho hàng</strong>
-<button type="button" id="add-head" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Nhập kho hàng</button>
+
+<div id="add-head">
+    <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Nhập tay</button>
+    <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('btn-file').click();"><i class="fa fa-plus" aria-hidden="true"></i> Nhập file</button>
+    <form action="#" method="POST">
+        <input type="file" id="btn-file" name="btn-file" style="display:none;" value="Select a File" />
+    </form>
+</div>
+
 <form action="#" name="f-update" method="POST" autocomplete="on">
     <input type="hidden" id="key" name="key" value="-1" />
     <select id="branch" class="form-control ctr-1x">
