@@ -718,3 +718,8 @@ function updatepartner(iadd) {
         }
     });
 }
+
+// Read file excel
+function readfileexcel(f) {
+    alert($("#btn-file").value)
+}

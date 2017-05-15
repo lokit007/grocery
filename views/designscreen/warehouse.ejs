@@ -4,7 +4,7 @@
     <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Nhập tay</button>
     <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('btn-file').click();"><i class="fa fa-plus" aria-hidden="true"></i> Nhập file</button>
     <form action="#" method="POST">
-        <input type="file" id="btn-file" name="btn-file" style="display:none;" value="Select a File" />
+        <input type="file" id="btn-file" name="btn-file" style="display:none;" onchange="readfileexcel(this);" value="Select a File" />
     </form>
 </div>
 
