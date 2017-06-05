@@ -20,8 +20,8 @@ function Db(pool) {
             });
         });
     },
-    // Change Data
-    this.changeData = (sql, p, conn) => {
+    // Execute Query
+    this.executeQuery = (sql, p, conn) => {
         return new Promise((resolve, reject) => {
             if(p == undefined) conn.query(sql, (error, results, fields) => {
                 if (error) reject(error);
