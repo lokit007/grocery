@@ -63,6 +63,10 @@ $(document).ready(function(){
         $('tbody').children('tr').remove();
         searchbranch();
    });
+   $('#btn-file').on("change",function(event) {
+    var tmppath = URL.createObjectURL(event.target.files[0]);
+    console.log(tmppath);
+});
 });
 
 // Show Message alert
@@ -719,7 +723,3 @@ function updatepartner(iadd) {
     });
 }
 
-// Read file excel
-function readfileexcel(f) {
-    alert($("#btn-file").value)
-}

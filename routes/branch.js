@@ -1,5 +1,7 @@
 // Model
 var Branch = require("../models/branch.js");
+var Db = require("../models/database.js");
+
 // Định nghĩa route
 var RouteBranch = function(app, pool) {
     // Danh sách branch mới khởi tạo

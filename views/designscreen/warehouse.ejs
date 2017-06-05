@@ -2,9 +2,9 @@
 
 <div id="add-head">
     <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Nhập tay</button>
-    <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('btn-file').click();"><i class="fa fa-plus" aria-hidden="true"></i> Nhập file</button>
-    <form action="#" method="POST">
-        <input type="file" id="btn-file" name="btn-file" style="display:none;" onchange="readfileexcel(this);" value="Select a File" />
+    <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('file').click();"><i class="fa fa-plus" aria-hidden="true"></i> Nhập file</button>
+    <form action="#" method="POST" id="form-file">
+        <input type="file" id="file" name="btn-file" onclick="clearValue(this);" onchange="handleFile(this);" style="display:none;" value="Select a File" />
     </form>
 </div>
 
@@ -20,6 +20,69 @@
     <button type="submit" id="update" name="action" value="update" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm ...</button>
 </form>
 <div id="view" class="d-clear"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
+<script>
+    var arrImport;
+    function handleFile(e) {
+        var files = e.files;
+        var i,f;
+        arrImport = new Array();
+        $("#myModal1").modal("show");
+        for (i = 0; i != files.length; ++i) {
+            f = files[i];
+            var reader = new FileReader();
+            var name = f.name;
+            reader.onload = function(e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, {type: 'binary'});
+            /* DO SOMETHING WITH workbook HERE */
+            var jsonObj = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            var html = "<table class='table table-hover table-condensed table-striped'>";
+            html += "<thead><tr><th>Tên hàng</th><th>Số lượng</th><th>Giá nhập</th><th>Danh mục</th></tr></thead>";
+            html += "<tbody>";
+            jsonObj.forEach(function(val, ind){
+                html += "<tr><th>"+val["Sản phẩm"]+"</th><th>"+val["Số lượng nhập"]+"</th><th>"+val["Giá nhập"]+"</th><th>"+val["Danh mục"]+"</th></tr>";
+                arrImport.push(val);
+            });
+            html += "</tbody></table>";
+            $("#d-load").html(html);
+            };
+            reader.readAsBinaryString(f);
+        }
+    }
+    function clearValue(e) {
+        $(e).val("");
+    }
+    function importDataExcel() {
+        if(Array.isArray(arrImport)){
+            if(arrImport.length>0) {
+                $.ajax({
+                    url: "/importexcel/warehouse",
+                    type: "POST",
+                    data: {
+                        listproduct: JSON.stringify(arrImport)
+                    },
+                    success: function(data){
+                        if (data === "Success") {
+                            alert("Đã xóa thành công đối tác.");
+                            window.location.reload(true);  
+                        } else {
+                            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                        }
+                    },
+                    error: function(){
+                        showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+                    }
+                });
+            } else {
+                alert("Bạn chưa nhập dữ liệu danh sách hàng hóa!");
+            }
+        } else {
+            alert("Bạn chưa nhập dữ liệu danh sách hàng hóa!");
+        }
+        
+    }
+</script>
 <script>
     $(document).ready(function(){
         $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
@@ -89,6 +152,24 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
         <button type="button" onclick="$('#f-update').submit();" class="btn btn-primary">Cập nhật</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel1">Danh sách sản phẩm nhập kho</h4>
+      </div>
+      <div class="modal-body" id="d-load" style="text-align: center;">
+            <i class="fa fa-spinner fa-3x fa-pulse" aria-hidden="true"></i>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+        <button type="button" onclick="importDataExcel();" class="btn btn-primary">Cập nhật</button>
       </div>
     </div>
   </div>
