@@ -8,18 +8,19 @@
     </form>
 </div>
 
-<form action="#" name="f-update" method="POST" autocomplete="on">
-    <input type="hidden" id="key" name="key" value="-1" />
-    <select id="branch" class="form-control ctr-1x">
+<form action="#" name="f-search" method="POST" autocomplete="on">
+    <input type="hidden" name="index" value="0" />
+    <select id="branch" name="branch" class="form-control ctr-1x">
         <option value="-1">Chi nhánh ...</option>
     </select>
-    <select id="category" class="form-control ctr-1x">
+    <select id="category" name="category" class="form-control ctr-1x">
         <option value="-1">Danh mục hàng ...</option>
     </select>
-    <input type="text" id="address" class="form-control ctr-1x" name="address" placeholder="Tên hoặc Mã sản phẩm cần tìm ..." title="Tên hoặc Mã sản phẩm cần tìm ..." />
-    <button type="submit" id="update" name="action" value="update" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm ...</button>
+    <input type="text" id="textsearch" name="textsearch" class="form-control ctr-1x" name="address" placeholder="Tên hoặc Mã sản phẩm cần tìm ..." title="Tên hoặc Mã sản phẩm cần tìm ..." />
+    <button type="submit" id="action" name="action" value="search" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm ...</button>
 </form>
 <div id="view" class="d-clear"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
 <script>
     var arrImport;
@@ -64,7 +65,7 @@
                     },
                     success: function(data){
                         if (data === "Success") {
-                            alert("Đã xóa thành công đối tác.");
+                            alert("Cập nhật dư liệu thành công.");
                             window.location.reload(true);  
                         } else {
                             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
@@ -80,7 +81,6 @@
         } else {
             alert("Bạn chưa nhập dữ liệu danh sách hàng hóa!");
         }
-        
     }
 </script>
 <script>
@@ -146,7 +146,6 @@
                 <input type="text" id="fullnamemodel" class="form-control ctr-1x" name="fullname" placeholder="(*) Số lượng nhập ..." />
                 <input type="text" id="identitycardmodel" class="form-control ctr-1x" name="identitycard" placeholder="(*) Giá nhập ..." />
                 <input type="text" id="addressmodel" class="form-control ctr-1x" name="address" placeholder="(*) Giá bán ..." />
-                
             </form>
       </div>
       <div class="modal-footer">
@@ -241,6 +240,7 @@
                 else
                     updatepartner(false);
             }
-        });    
+        });
+            
     });
 </script>

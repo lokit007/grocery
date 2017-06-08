@@ -61,21 +61,19 @@ var RouteWarehouse = function(app, pool) {
     });
     // Search
     app.get('/search/warehouse', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
-        sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, ";
-        sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description ";
-        sql += "from `admin` ";
-        sql += "inner join `user` on `admin`.UserId = `user`.IdUser ";
-        sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction ";
-        sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
-        sql += "where UserName like ? and FullName like N? and IdentityCard like ? and `user`.Address like N? and `user`.Phone like ? ";
+        var sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
+        sql += "Price, NewNumber, NewPrice, OldNumber, OldPrice, ";
+        sql += "CategoryId, `category`.Name as CategoryName from depot ";
+        sql += "inner join `product` on ProductId = IdProduct ";
+        sql += "inner join `branch` on BranchId = IdBranch ";
+        sql += "inner join `category` on CategoryId = IdCategory ";
+        sql += "where BranchId = ? and CategoryId = ? ";
+        sql += "and product.Name like N? ";
         sql += "limit ?, 10 ";
         var param = [
-            "%"+req.query.username+"%",
-            "%"+req.query.fullname+"%",
-            "%"+req.query.identitycard+"%",
-            "%"+req.query.address+"%",
-            "%"+req.query.phone+"%",
+            req.query.branch,
+            req.query.category,
+            "%"+req.query.textsearch+"%",
             parseInt(req.query.index)
         ]
         pool.getConnection(function(err, connection) {
@@ -216,17 +214,9 @@ var RouteWarehouse = function(app, pool) {
     });
     // import data excel
     app.post('/importexcel/warehouse', function(req, res){
-        var arrlist = JSON.parse(req.body.listproduct);
-        var sql = "";
-        var idProduct = "";
-        var idCategory = "";
-        var idSupplier = "";
-        var idBranch = "";
-        var dNow = new Date();
-        var isInsert = false;
-        var oldId = "";
-        var newId = "";
-        var idWarehousing = "";
+        let arrlist = JSON.parse(req.body.listproduct);
+        let sql = "";
+        let obj = [];
         // sort data
         arrlist.sort(function(a, b){
             if (a["Nhà cung cấp"] > b["Nhà cung cấp"]) return 1;
@@ -242,155 +232,34 @@ var RouteWarehouse = function(app, pool) {
                     try {
                         arrlist.forEach(function( val, ind){
                             newId = val["Nhà cung cấp"] + val["Chi nhánh"];
-                            sql = " select `category`.IdCategory from `category` where `category`.Name like N?; ";
-                            sql += " select `product`.IdProduct from `product` where `product`.Name like N?;";
-                            sql += " select `supplier`.IdSupplier from `supplier` where `supplier`.ContactName like N?; ";
-                            sql += " select `branch`.IdBranch from `branch` where `branch`.NameBranch like N?; ";
-                            objDb.executeQuery(sql, [val["Danh mục"], val["Sản phẩm"], val["Nhà cung cấp"], val["Chi nhánh"]], connection).then(results => {
-                                // Get IdCategory
-                                return new Promise((resolve, reject) => {
-                                    if (results[0].length < 1) {
-                                        let sqlInsert = "INSERT INTO `category` SET ?";
-                                        var obj = {
-                                            Name: val["Danh mục"],
-                                            DateCreate: dNow.toLocaleString(),
-                                            State: 0
-                                        }
-                                        objDb.executeQuery(sqlInsert, obj, connection)
-                                        .then(result => {
-                                            idCategory = result.insertId;
-                                            return resolve(results);
-                                        }).catch(error => reject(error));
-                                    } else {
-                                        idCategory = results[0][0].IdCategory;
-                                        return resolve(results);
-                                    }
-                                });
-                            })
-                            .then(results => {
-                                // Get IdProduct
-                                return new Promise((resolve, reject) => {
-                                    if (results[1].length < 1) {
-                                        let sqlInsert = "INSERT INTO `product` SET ?";
-                                        let obj = {
-                                            CategoryId: idCategory,
-                                            Name: val["Sản phẩm"],
-                                            Price: val["Giá nhập"],
-                                            DateUpdate: dNow.toLocaleString()
-                                        }
-                                        objDb.executeQuery(sqlInsert, obj, connection)
-                                        .then(result => {
-                                            idProduct = result.insertId;
-                                            isInsert = true;
-                                            return resolve(results);
-                                        }).catch(error => reject(error));
-                                    } else {
-                                        idProduct = results[1][0].IdProduct;
-                                        return resolve(results);
-                                    }
-                                });
-                            })
-                            .then(results => {
-                                // Get IdSupplier
-                                return new Promise((resolve, reject) => {
-                                    if (results[2].length < 1) {
-                                        let sqlInsert = "INSERT INTO `supplier` SET ?";
-                                        let obj = {
-                                            ContactName: val["Nhà cung cấp"],
-                                            ContactPhone: "01234567899"
-                                        }
-                                        objDb.executeQuery(sqlInsert, obj, connection)
-                                        .then(result => {
-                                            idSupplier = result.insertId;
-                                            return resolve(results);
-                                        }).catch(error => reject(error));
-                                    } else {
-                                        idSupplier = results[2][0].IdSupplier;
-                                        return resolve(results);
-                                    }
-                                });
-                            })
-                            .then(results => {
-                                // Update kho hàng
-                                return new Promise((resolve, reject) => {
-                                    if (results[3].length < 1) reject(new Error("Chi nhánh không tồn tại trong hệ thống!"));
-                                    else {
-                                        // update table depot
-                                        idBranch = results[3][0].IdBranch;
-                                        let sqlUpdate = "INSERT INTO `depot` SET ?";
-                                        let obj = {
-                                            BranchId: idBranch,
-                                            ProductId: idProduct,
-                                            NewNumber: val["Số lượng nhập"],
-                                            NewPrice: val["Giá nhập"],
-                                            OldNumber: 0,
-                                            OldPrice: 0,
-                                            DateUpdate: dNow.toLocaleString(),
-                                            State: 0
-                                        }
-                                        if (isInsert == false) {
-                                            sqlUpdate = "UPDATE `depot` SET NewNumber += ?, NewPrice = ?, DateUpdate = ? WHERE BranchId = ? AND ProductId = ?";
-                                            obj = [val["Số lượng nhập"],val["Giá nhập"], dNow.toLocaleString(), idBranch, idProduct];
-                                        }
-                                        objDb.executeQuery(sqlUpdate, obj, connection)
-                                        .then(result => {
-                                            idSupplier = result.insertId;
-                                            return resolve(results);
-                                        })
-                                        .then(result => {
-                                            // update table warehousing
-                                            isInsert = true;
-                                            sqlUpdate = "INSERT INTO `warehousing` SET ?";
-                                            obj = {
-                                                SupplierId: idSupplier,
-                                                BranchId: idBranch,
-                                                DateCreate: dNow.toLocaleString(),
-                                                TotalCost: val["Số lượng nhập"],
-                                                Tax: 0
-                                            }
-                                            if (oldId === newId) {
-                                                isInsert = false;
-                                                sqlUpdate = "UPDATE `warehousing` SET NewNumber += ?, NewPrice = ?, DateUpdate = ? WHERE BranchId = ? AND ProductId = ?";
-                                                obj = [val["Số lượng nhập"],val["Giá nhập"], dNow.toLocaleString(), idBranch, idProduct];
-                                            } else oldId = newId;
-                                            objDb.executeQuery(sqlUpdate, obj, connection)
-                                            .then(result => {
-                                                if(isInsert == true) idWarehousing = result.insertId;
-                                                return resolve(results);
-                                            })
-                                            .catch(error => reject(error))
-                                        })
-                                        .then(result => {
-                                            // update table detailwarehousing
-                                            sqlUpdate = "INSERT INTO `detailwarehousing` SET ?";
-                                            obj = {
-                                                WarehousingId: idWarehousing,
-                                                ProductId: idProduct,
-                                                Price: val["Giá nhập"],
-                                                Number: val["Số lượng nhập"],
-                                                Tax: 0
-                                            }
-                                            objDb.executeQuery(sqlUpdate, obj, connection)
-                                            .then(result => {
-                                                if(isInsert == true) idWarehousing = result.insertId;
-                                                return resolve(results);
-                                            })
-                                            .catch(error => reject(error))
-                                        })
-                                        .catch(error => reject(error));
-                                    }
-                                });
-                            })
+                            sql = "set @Result = 0; ";
+                            sql += "set @Message = ''; ";
+                            sql += "call grocerydb.ImportWareHouse(N?, ?, ?, N?, N?, N?, @Result, @Message); ";
+                            sql += "select @Result as Result, @Message as Message limit 1; ";
+                            obj = [
+                                val["Sản phẩm"],
+                                val["Số lượng nhập"],
+                                val["Giá nhập"],
+                                val["Danh mục"],
+                                val["Chi nhánh"],
+                                val["Nhà cung cấp"]
+                            ];
+                            objDb.executeQuery(sql, obj, connection).then(results => {
+                                console.log(results[3][0].Result);
+                                if(results[3][0].Result == -1) {
+                                    throw new Error("Lỗi cập nhật " + results[3][0].Message);
+                                }
+                            });
                         });
                         connection.commit(function(errComit){
                             if(errComit) connection.rollback(() => {
-                                res.send("Thay đổi thất bại");
+                                res.send("Error");
                             });
-                            res.send("Thay đổi ok")
+                            res.send("Success")
                         });
                     } catch (error) {
                         connection.rollback(() => {
-                            res.send("Thay đổi thất bại");
+                            res.send("Error");
                         });
                     } finally {
                         connection.release();
