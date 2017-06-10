@@ -91,7 +91,11 @@ function infobranch(id) {
     $.ajax({
         url: "/branch/"+id,
         type: "GET",
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 $("#key").val(data.id);
                 $("#name").val(data.name);
@@ -108,6 +112,7 @@ function infobranch(id) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -125,7 +130,11 @@ function searchbranch() {
             email: $("#email").val(),
             fax: $("#fax").val()
         },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 if(data.length<10) {
                     $("#viewmore").hide();
@@ -150,6 +159,7 @@ function searchbranch() {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -161,7 +171,11 @@ function deletebranch(id) {
         $.ajax({
             url: "/delete/branch/"+id,
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data === "Success") {
                     alert("Đã xóa thành công chi nhánh.");
                     window.location.reload(true);  
@@ -170,6 +184,7 @@ function deletebranch(id) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -203,7 +218,11 @@ function updatebranch(iadd) {
                 email: $("#email").val(),
                 fax: $("#fax").val()
             },
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data !== undefined) {
                     if(data.length>0) {
                         showAlert('error', " Lỗi ràng buộc dữ liệu hệ thống", "Chi nhánh đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
@@ -240,6 +259,7 @@ function updatebranch(iadd) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -252,7 +272,11 @@ function infocategory(id) {
     $.ajax({
         url: "/category/"+id,
         type: "GET",
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 $("#key").val(data.id);
                 $("#name").val(data.name);
@@ -266,6 +290,7 @@ function infocategory(id) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -279,7 +304,11 @@ function searchcategory() {
             index: $('tbody').children('tr').length,
             name: $("#name").val()
         },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 if(data.length<10) {
                     $("#viewmore").hide();
@@ -301,6 +330,7 @@ function searchcategory() {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -312,7 +342,11 @@ function deletecategory(id) {
         $.ajax({
             url: "/delete/category/"+id,
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data === "Success") {
                     alert("Đã xóa thành công danh mục.");
                     window.location.reload(true);  
@@ -321,6 +355,7 @@ function deletecategory(id) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -342,7 +377,11 @@ function updatecategory(iadd) {
                 index: 0,
                 name: $("#name").val()
             },
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data !== undefined) {
                     if(data.length>0) {
                         showAlert('error', " Lỗi ràng buộc dữ liệu hệ thống", "Danh mục đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
@@ -376,6 +415,7 @@ function updatecategory(iadd) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -401,7 +441,11 @@ function showmodelpersonnel(sel) {
         $.ajax({
             url: "/personnel/" + $("#key").val(),
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data !== undefined) {
                     $("#keymodel").val(data.UserId);
                     $("#usernamemodel").val(data.UserName);
@@ -421,6 +465,7 @@ function showmodelpersonnel(sel) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -432,7 +477,11 @@ function infopersonnel(id) {
     $.ajax({
         url: "/personnel/"+id,
         type: "GET",
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 $("#key").val(data.UserName);
                 $("#username").val(data.UserName);
@@ -454,6 +503,7 @@ function infopersonnel(id) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -471,7 +521,11 @@ function searchpersonnel() {
             address: $("#address").val(),
             phone: $("#phone").val()
         },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 if(data.length<10) {
                     $("#viewmore").hide();
@@ -497,6 +551,7 @@ function searchpersonnel() {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -508,7 +563,11 @@ function deletepersonnel(id) {
         $.ajax({
             url: "/delete/personnel/"+id,
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data === "Success") {
                     alert("Đã xóa thành công nhân viên.");
                     window.location.reload(true);  
@@ -517,6 +576,7 @@ function deletepersonnel(id) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -532,6 +592,9 @@ function updatepersonnel(iadd) {
     $.ajax({
         url: "/update/personnel",
         type: "POST",
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         data: {
             id: idChange,
             username: $("#usernamemodel").val(),
@@ -545,6 +608,7 @@ function updatepersonnel(iadd) {
             salary: $("#salarymodel").val()  
         },
         success: function(dataChange){
+            $("#d-waiting").hide();
             if (dataChange === "Success") {
                 alert("Đã cập nhật thành công nhân viên.");
                 window.location.reload(true);  
@@ -553,6 +617,7 @@ function updatepersonnel(iadd) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -577,7 +642,11 @@ function showmodelpartner(sel) {
         $.ajax({
             url: "/personnel/" + $("#key").val(),
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data !== undefined) {
                     $("#keymodel").val(data.UserId);
                     $("#usernamemodel").val(data.UserName);
@@ -597,6 +666,7 @@ function showmodelpartner(sel) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -608,7 +678,11 @@ function infopartner(id) {
     $.ajax({
         url: "/partner/"+id,
         type: "GET",
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 $("#key").val(data.UserId);
                 $("#name").val(data.Name);
@@ -625,6 +699,7 @@ function infopartner(id) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -641,7 +716,11 @@ function searchpartner() {
             address: $("#address").val(),
             phone: $("#phone").val()
         },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(data){
+            $("#d-waiting").hide();
             if (data !== undefined) {
                 if(data.length<10) {
                     $("#viewmore").hide();
@@ -666,6 +745,7 @@ function searchpartner() {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });
@@ -677,7 +757,11 @@ function deletepartner(id) {
         $.ajax({
             url: "/delete/partner/"+id,
             type: "GET",
+            beforeSend: function() {
+                $("#d-waiting").show();
+            },
             success: function(data){
+                $("#d-waiting").hide();
                 if (data === "Success") {
                     alert("Đã xóa thành công đối tác.");
                     window.location.reload(true);  
@@ -686,6 +770,7 @@ function deletepartner(id) {
                 }
             },
             error: function(){
+                $("#d-waiting").hide();
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
         });
@@ -709,7 +794,11 @@ function updatepartner(iadd) {
             email: $("#email").val(),
             delegate: $("#delegate").val()
         },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
         success: function(dataChange){
+            $("#d-waiting").hide();
             if (dataChange === "Success") {
                 alert("Đã cập nhật đối tác thành công.");
                 window.location.reload(true);  
@@ -718,6 +807,7 @@ function updatepartner(iadd) {
             }
         },
         error: function(){
+            $("#d-waiting").hide();
             showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
         }
     });

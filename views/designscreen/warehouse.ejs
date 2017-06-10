@@ -1,8 +1,8 @@
 <strong id="tittle">Kho hàng</strong>
 
 <div id="add-head">
-    <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Nhập tay</button>
-    <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('file').click();"><i class="fa fa-plus" aria-hidden="true"></i> Nhập file</button>
+    <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus fa-lg icon-btn" aria-hidden="true"></i> Nhập tay</button>
+    <button type="button" id="myFileInput" class="btn btn-primary btn-sm ctr-btn" onclick="document.getElementById('file').click();"><i class="fa fa-file-excel-o fa-lg icon-btn" aria-hidden="true"></i> Nhập file</button>
     <form action="#" method="POST" id="form-file">
         <input type="file" id="file" name="btn-file" onclick="clearValue(this);" onchange="handleFile(this);" style="display:none;" value="Select a File" />
     </form>
@@ -17,7 +17,7 @@
         <option value="-1">Danh mục hàng ...</option>
     </select>
     <input type="text" id="textsearch" name="textsearch" class="form-control ctr-1x" name="address" placeholder="Tên hoặc Mã sản phẩm cần tìm ..." title="Tên hoặc Mã sản phẩm cần tìm ..." />
-    <button type="submit" id="action" name="action" value="search" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-search" aria-hidden="true"></i> Tìm kiếm ...</button>
+    <button type="submit" id="action" name="action" value="search" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-search fa-lg icon-btn" aria-hidden="true"></i> Tìm kiếm ...</button>
 </form>
 <div id="view" class="d-clear"></div>
 
@@ -137,15 +137,18 @@
         <h4 class="modal-title" id="myModalLabel">Thêm hàng vào kho</h4>
       </div>
       <div class="modal-body">
-            <form action="/update/personnel" id="f-update" name="f-update" method="POST" autocomplete="on">
+            <form action="/update/personnel" id="f-update" name="f-update" method="POST">
                 <input type="hidden" id="keymodel" name="key" />
-                <input type="text" id="usernamemodel" class="form-control ctr-1x" name="username" placeholder="(*) Sản phẩm ..." />
+                <input type="text" id="productmodel" class="form-control ctr-1x" name="product" placeholder="(*) Sản phẩm ..." list="products" />
+                <datalist id="products"></datalist>
                 <select id="branchmodel" class="form-control ctr-1x" name="branch" placeholder="(*) Chi nhánh ..."></select>
-                <select id="categorymodel" class="form-control ctr-1x" name="category" placeholder="(*) Danh mục ..."></select>
-                <select id="suppliermodel" class="form-control ctr-1x" name="supplier" placeholder="(*) Nhà cung cấp"></select>
-                <input type="text" id="fullnamemodel" class="form-control ctr-1x" name="fullname" placeholder="(*) Số lượng nhập ..." />
-                <input type="text" id="identitycardmodel" class="form-control ctr-1x" name="identitycard" placeholder="(*) Giá nhập ..." />
-                <input type="text" id="addressmodel" class="form-control ctr-1x" name="address" placeholder="(*) Giá bán ..." />
+                <input type="text" id="categorymodel" class="form-control ctr-1x" name="category" placeholder="(*) Danh mục ..." list="categorys" />
+                <datalist id="categorys"></datalist>
+                <input type="text" id="suppliermodel" class="form-control ctr-1x" name="supplier" placeholder="(*) Nhà cung cấp" list="suppliers" />
+                <datalist id="suppliers"></datalist>
+                <input type="text" id="numbermodel" class="form-control ctr-1x" name="number" placeholder="(*) Số lượng nhập ..." />
+                <input type="text" id="pricedmodel" class="form-control ctr-1x" name="price" placeholder="(*) Giá nhập ..." />
+                <input type="text" id="salemodel" class="form-control ctr-1x" name="sale" placeholder="(*) Giá bán ..." />
             </form>
       </div>
       <div class="modal-footer">
@@ -185,22 +188,25 @@
             success: function(data){
                 if(data.length>0) {
                     var html = "";
+                    var htmls = "";
                     for(var i=0; i<data[0].length; i++) {
                         html += "<option id='br"+data[0][i].IdBranch+"' value='"+data[0][i].IdBranch+"'>"+data[0][i].NameBranch+"</option>";
                     }
                     $('#branch').append(html);
                     $('#branchmodel').append(html);
                     html = "";
+                    htmls = "";
                     for(var i=0; i<data[1].length; i++) {
                         html += "<option id='ct"+data[1][i].IdCategory+"' value='"+data[1][i].IdCategory+"'>"+data[1][i].Name+"</option>";
+                        htmls += "<option value='"+data[1][i].Name+"'>"+data[1][i].IdCategory+"</option>";
                     }
                     $('#category').append(html);
-                    $('#categorymodel').append(html);
-                    html = "";
+                    $('#categorys').append(htmls);
+                    htmls = "";
                     for(var i=0; i<data[2].length; i++) {
-                        html += "<option id='sp"+data[2][i].IdSupplier+"' value='"+data[2][i].IdSupplier+"'>"+data[2][i].ContactName+"</option>";
+                        htmls += "<option value='"+data[2][i].ContactName+"'>"+data[2][i].IdSupplier+"</option>";
                     }
-                    $('#suppliermodel').append(html);
+                    $('#suppliers').append(htmls);
                 }
             },
             error: function(){
@@ -210,28 +216,38 @@
         
         $("form[name='f-update']").validate({
             rules : {
-                name: "required",
-                delegate: 'required',
-                address: 'required',
-                phone: {
+                product: "required",
+                category: 'required',
+                supplier: 'required',
+                number: {
                     required: true,
-                    digits: true,
-                    minlength: 10,
-                    maxlength: 20,
+                    digits: true
                 },
-                email: 'email'
+                price:  {
+                    required: true,
+                    digits: true
+                },
+                sale:  {
+                    required: true,
+                    digits: true
+                }
             },
             messages : {
-                name: 'Bạn chưa nhập dữ liệu cho trường này!',
-                delegate: 'Bạn chưa nhập dữ liệu cho trường này!',
-                address: 'Bạn chưa nhập dữ liệu cho trường này!',
-                phone: {
+                product: 'Bạn chưa nhập dữ liệu cho trường này!',
+                category: 'Bạn chưa nhập dữ liệu cho trường này!',
+                supplier: 'Bạn chưa nhập dữ liệu cho trường này!',
+                number: {
                     required: "Bạn chưa nhập dữ liệu cho trường này!",
-                    digits: "Hãy nhập số điện thoại!",
-                    minlength: "Hãy nhập số điện thoại!",
-                    maxlength: "Hãy nhập số điện thoại!",
+                    digits: "Nhập số nguyên dương!"
                 },
-                email: 'Hãy nhập định dạng email!'
+                price: {
+                    required: "Bạn chưa nhập dữ liệu cho trường này!",
+                    digits: "Nhập số nguyên dương!"
+                },
+                sale: {
+                    required: "Bạn chưa nhập dữ liệu cho trường này!",
+                    digits: "Nhập số nguyên dương!"
+                }
             },
             submitHandler : function(form) {
                 var event = $(form).serializeArray()[6].value;

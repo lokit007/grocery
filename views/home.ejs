@@ -4,13 +4,7 @@
         <title>Quản lý hệ thống tạp hóa</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../css/bootstrap.min.css" rel="stylesheet" />
-        <link href="../css/adminstyle.css" rel="stylesheet" />
-        <script src="../js/jquery-3.1.1.min.js"></script>
-        <script src="../js/jquery.validate.min.js"></script>
-        <script src="../js/bootstrap.min.js"></script>
-        <script src="../js/admin.js"></script>
-        <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+        <% include files/_header.js %>
     </head>
     <body>
         <div id="d-contain">
@@ -47,22 +41,7 @@
             </div>
             <div class="d-clear"></div>
         </div>
-
-        // Model
-        <div id="mdShowMes" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div id="md-div" class="modal-content modal-error">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">
-                        <i id="md-title" class="fa fa-exclamation-triangle" aria-hidden="true"> Tiêu đề Mes</i>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <p id="md-content">Nội dung tin nhắn</p>
-                </div>
-            </div>
-        </div>
-        </div>
+        
+        <% include files/_footer.js %>
     </body>
 </html>
