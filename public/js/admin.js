@@ -1,11 +1,11 @@
 $(document).ready(function(){
     // Xu ly menu
-    $("#btn-show-menu").click(function(){
-        if ($("#sub-memu").attr("style") == undefined) {
-            $("#sub-memu").hide(200);
+    $("#menu").click(function(){
+        if ($("#sub-memu").attr("style") == "display: initial;") {
+            $("#sub-memu").attr("style", "display: none;");
             $("#btn-show-menu").attr("class", "fa fa-bars");
         } else {
-            $("#sub-memu").show(100);
+            $("#sub-memu").attr("style", "display: initial;");
             $("#btn-show-menu").attr("class", "fa fa-bars fa-rotate-90");
         }
    });

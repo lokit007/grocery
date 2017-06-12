@@ -93,6 +93,7 @@ div#menu {
     background-color: black;
     overflow: hidden;
 }
+
 i#btn-show-menu {
     float: right;
     padding: 5px;
@@ -200,12 +201,46 @@ td#viewmore {
 
 /* Man hinh dien thoai */
 @media all and (max-width: 599px) {
-    
+    div#d-navigation {
+        width: 100%;
+        height: initial;
+        float: none;
+        position: absolute;
+    }
+    ul#sub-memu {
+        display: none;
+        z-index: 1;
+        background-color: white;
+        position: absolute;
+        width: 100%;
+        overflow: auto;
+        border-bottom: 1px solid darkred;
+    }
+    strong#tittle {
+        font-size: 1.8em;
+    }
+    div#d-content {
+        margin-top: 50px;
+        width: 100%;
+        height: initial;
+    }
+    .ctr-1x, .ctr-3x {
+        max-width: 93%;
+        float: none !important;
+    }
 }
 
 /* Man hinh IPad */
 @media all and (min-width: 600px) and (max-width: 1023px) {
-
+    div#d-navigation {
+        width: 45px;
+    }
+    div#menu span, ul#sub-memu li span {
+        display: none;
+    }
+    div#d-content {
+        width: 90%;
+    }
 }
 /* Man hinh lap top */
 @media all and (min-width: 1024px) {
