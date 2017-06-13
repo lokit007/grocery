@@ -10,9 +10,9 @@ function Db(pool) {
                         else resolve(results);
                     });
             });
-            else pool.getConnection((err, p, connection) => {
+            else pool.getConnection((err, connection) => {
                 if (err) reject(err);
-                else connection.query(sql, (error, results, fields) => {
+                else connection.query(sql, p, (error, results, fields) => {
                         connection.release();
                         if (error) reject(error);
                         else resolve(results);

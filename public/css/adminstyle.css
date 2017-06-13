@@ -121,7 +121,20 @@ li.active {
     background-color: aliceblue;
     cursor: no-drop !important;
 }
-
+div#user-login p {
+    margin: 5px 5px;
+    font-weight: 600;
+}
+div#user-login {
+    border: 5px solid gray;
+    padding: 5px;
+}
+i.fa-even {
+    float: right;
+    font-size: 1.5em;
+    margin: 0px 5px;
+    cursor: pointer;
+}
 /* Màn hình branch(Chi nhánh) */
 strong#tittle {
     border-bottom: 1px solid gray;
@@ -228,6 +241,9 @@ td#viewmore {
         max-width: 93%;
         float: none !important;
     }
+    div#user-login {
+        display: none;
+    }
 }
 
 /* Man hinh IPad */
@@ -240,6 +256,9 @@ td#viewmore {
     }
     div#d-content {
         width: 90%;
+    }
+    div#user-login {
+        display: none;
     }
 }
 /* Man hinh lap top */

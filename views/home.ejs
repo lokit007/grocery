@@ -19,6 +19,14 @@
                     <li data="5" <% if(screen === 5) { %> class="active" <% } %>><i class="fa fa-area-chart" aria-hidden="true"></i><span>Thống kê</span></li>
                     <li data="6" <% if(screen === 6) { %> class="active" <% } %>><i class="fa fa-envelope" aria-hidden="true"></i><span>Tin nhắn</span></li>
                 </ul>
+                <div id="user-login">
+                    <i class="fa fa-user-circle-o fa-3x" aria-hidden="true"> <%= session.user %></i>
+                    <p><%= session.name %></p>
+                    <p><%= session.jurisdictionname %></p>
+                    <i class="fa fa-sign-out fa-even" title="Đăng xuất" aria-hidden="true" onclick="window.location.href='logout'" ></i>
+                    <i class="fa fa-address-card-o fa-even" title="Thông tin tài khoản" aria-hidden="true" onclick="window.location.href='personnel'"></i>
+                    <div class="d-clear"></div>
+                </div>
             </div>
             <div id="d-content">
                 <% if(screen === 0) { %>

@@ -1,19 +1,20 @@
 // Khai báo modul
-var express = require("express");
-var mysql = require("mysql");
-var bodyParser = require("body-parser");
-var session = require('express-session');
-var config = require("./public/files/config-server.js");
+let express = require("express");
+let mysql = require("mysql");
+let bodyParser = require("body-parser");
+let session = require('express-session');
+let config = require("./public/files/config-server.js");
+let Db = require("./models/database.js");
 
 // Khai báo biến môi trường
-var app = express();
-var objCongig = new config();
-var post = process.env.PORT || 3000;
-var host = "localhost";
-var lsAdmin = [];
+let app = express();
+let objCongig = new config();
+let post = process.env.PORT || 3000;
+let host = "localhost";
+let lsAdmin = [];
 
 // Khai báo cấu hình csdl
-var pool = mysql.createPool({
+let pool = mysql.createPool({
     connectionLimit: 1000,
     connectTimeout : 60 * 60 * 1000,
     aquireTimeout  : 60 * 60 * 1000,
@@ -46,9 +47,21 @@ app.listen(post, function(){
 });
 
 // Config routes
+app.use(function(req, res, next){
+    if(req.path == "/login") {
+        next();
+    } else {
+        if(req.session.login === "true") {
+            next();
+        } else {
+            res.render("login", { 'meserr' : "" });
+        }
+    }
+});
+
 app.get("/", function(req, res){
     if(req.session.login === "true") {
-        res.render("home", {screen: 0, data : {}});
+        res.redirect("/branch");
     } else {
         res.render("login", { 'meserr' : "" });
     }
@@ -58,28 +71,43 @@ app.post("/login", function(req, res){
     if(req.session.login === "true" || lsAdmin.indexOf(req.body.username) >= 0)  {
         res.render("error");
     } else {
-        var sql = "SELECT * FROM `admin` WHERE UserName=? AND PassWord=?"; // Thực hiện câu truy vấn và show dữ liệu
-        pool.getConnection(function(err, connection) {
-            connection.query(sql, [req.body.username, req.body.pass], function (error, results, fields) {
-                connection.release();
-                if (error) throw error;
-                else if (results.length>0) {
+        let objDb = new Db(pool);
+        let sql = `select UserName, UserId, FullName, BranchId, JurisdictionId, jurisdiction.Name as JurisdictionName from admin 
+        inner join user on admin.UserId = user.IdUser 
+        inner join branch on admin.BranchId = branch.IdBranch 
+        inner join jurisdiction on admin.JurisdictionId = jurisdiction.IdJurisdiction 
+        where UserName = ? and PassWord = ?;`;
+        try {
+            objDb.getData(sql, [req.body.username, req.body.pass])
+            .then(results => {
+                if (results.length>0) {
                     req.session.login = "true";
-                    req.session.admin = results[0];
+                    req.session.admin = {
+                        user: results[0].UserName,
+                        name: results[0].FullName,
+                        branch: results[0].BranchId,
+                        jurisdiction: results[0].JurisdictionId,
+                        jurisdictionname: results[0].JurisdictionName
+                    };
                     lsAdmin.push(req.body.username);
                     res.redirect("/");
                 } else {
                     req.session.login = "false";
                     res.render("login", {'meserr' : "Tên đăng nhập hoặc mật khẩu không chính xác !!!"});
                 }
+            })
+            .catch(error => {
+                res.render("error", {error: error});
             });
-        });          
+        } catch (error) {
+            res.render("error", {error: error});
+        }
     }
 });
 
 app.get("/logout", function(req, res){
     req.session.login = "false";
-    var index = lsAdmin.indexOf(req.session.admin.UserName);
+    let index = lsAdmin.indexOf(req.session.admin.user);
     if (index != -1) {
         lsAdmin.splice(index,1);
     }
