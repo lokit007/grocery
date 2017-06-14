@@ -19,12 +19,12 @@ let pool = mysql.createPool({
     connectTimeout : 60 * 60 * 1000,
     aquireTimeout  : 60 * 60 * 1000,
     timeout        : 60 * 60 * 1000,
-    host           : objCongig.dbHost,
-    port           : objCongig.dbPost,
-    user           : objCongig.dbUser,
-    // password       : objCongig.dbPass,
-    password       : null,
-    database       : objCongig.dbData,
+    host           : objCongig.dbolHost,
+    port           : objCongig.dbolPost,
+    user           : objCongig.dbolUser,
+    password       : objCongig.dbolPass,
+    // password       : null,
+    database       : objCongig.dbolData,
     multipleStatements : true
 });
 
