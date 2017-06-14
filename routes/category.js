@@ -1,6 +1,6 @@
 // Model
 let Category = require("../models/category.js");
-var Db = require("../models/database.js");
+let Db = require("../models/database.js");
 
 // Định nghĩa route
 let RouteCategory = function(app, pool) {

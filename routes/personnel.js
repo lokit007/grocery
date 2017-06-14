@@ -1,10 +1,14 @@
 // Model
-var Personnel = require("../models/personnel.js");
+let Personnel = require("../models/personnel.js");
+let Db = require("../models/database.js");
+
 // Route
-var RoutePersonnel = function(app, pool) {
+let RoutePersonnel = function(app, pool) {
     // Mới khởi tạo
     app.get('/personnel', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
         sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
         sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
         sql += "from `admin` "
@@ -12,26 +16,32 @@ var RoutePersonnel = function(app, pool) {
         sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
         sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
         sql += "limit 0, 10 ";
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
-                        }
-                        res.render("home", {screen: 1, data : objList});
-                    } else {
-                        res.render("home", {screen: 1, data : {}});
+
+        try {
+            objDb.getData(sql)
+            .then(results => {
+                if (results.length>0) {
+                    let objList = [];
+                    for(let i=0; i<results.length; i++) {
+                        objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
                     }
-                });
-        }); 
+                    res.render("home", {screen: 1, session: session, data : objList});
+                } else {
+                    res.render("home", {screen: 1, session: session, data : {}});
+                }
+            })
+            .catch(error => {
+                res.render("home", {screen: 1, session: session, data : {}});
+            });
+        } catch (error) {
+            res.render("home", {screen: 1, session: session, data : {}});
+        } 
     });
     // Thông tin theo id
     app.get('/personnel/:id', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
         sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
         sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
         sql += "from `admin` "
@@ -39,24 +49,30 @@ var RoutePersonnel = function(app, pool) {
         sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
         sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
         sql += "where UserName = ?";
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, [req.params.id], function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var i = 0;
-                        var obj = new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description)
-                        res.send(obj);
-                    } else {
-                        res.send({});
-                    }
-                });
-        });
+
+        try {
+            objDb.getData()
+            .then(results => {
+                if (results.length>0) {
+                    let i = 0;
+                    let obj = new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description)
+                    res.send(obj);
+                } else {
+                    res.send({});
+                }
+            })
+            .catch(error => {
+                res.send({});
+            });
+        } catch (error) {
+            res.send({});
+        }
     });
     // Search
     app.get('/search/personnel', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
         sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, ";
         sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description ";
         sql += "from `admin` ";
@@ -65,37 +81,44 @@ var RoutePersonnel = function(app, pool) {
         sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
         sql += "where UserName like ? and FullName like N? and IdentityCard like ? and `user`.Address like N? and `user`.Phone like ? ";
         sql += "limit ?, 10 ";
-        var param = [
+        let obj = [
             "%"+req.query.username+"%",
             "%"+req.query.fullname+"%",
             "%"+req.query.identitycard+"%",
             "%"+req.query.address+"%",
             "%"+req.query.phone+"%",
             parseInt(req.query.index)
-        ]
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, param, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
+        ];
+
+        try {
+            objDb.getData(sql, obj)
+            .then(results => {
+                if (results.length>0) {
+                    let objList = [];
+                    for(let i=0; i<results.length; i++) {
+                        objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
                         }
-                        res.send(objList);
-                    } else {
-                        res.send([]);
-                    }
-                });
-        }); 
+                    res.send(objList);
+                } else {
+                    res.send([]);
+                }
+            })
+            .catch(error => {
+                res.send([]);
+            });
+        } catch (error) {
+            res.send([]);
+        } 
     });
     // Update
     app.post('/update/personnel', function(req, res){
-        var sql = "";
-        var obj = {};
-        var id = req.body.id;
-        var dNow = new Date();
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "";
+        let obj = {};
+        let id = req.body.id;
+        let dNow = new Date();
+        
         if (id == '-1') {
             sql = "INSERT INTO `user` SET ?";
             obj = {
@@ -108,36 +131,31 @@ var RoutePersonnel = function(app, pool) {
             sql = "UPDATE `user` SET FullName = ?, Address = ?, Phone = ?, Email = ? WHERE IdUser = ?";
             obj = [req.body.fullname, req.body.address, req.body.phone, req.body.email, id]
         }
-        pool.getConnection(function(err, connection) {
-            connection.beginTransaction(function(errTran){
-                if(errTran) throw errTran;
-                connection.query(sql, obj, function(error, results, fields){
-                    if(error) connection.rollback(function(){
-                        res.send("Erorr");
-                        throw error;
-                    });
-                    // Cập nhật tiếp
-                    if (id == '-1') {
-                        sql = "INSERT INTO `admin` SET ?";
-                        obj = {
-                            UserName: req.body.username,
-                            PassWord: "12345678",
-                            UserId: results.insertId,
-                            BranchId: req.body.branch,
-                            JurisdictionId: req.body.jurisdiction,
-                            IdentityCard: req.body.identitycard,
-                            TotalSalary: req.body.salary
-                        };
-                    } else {
-                        sql = "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
-                        obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.username]
-                    }
-                    connection.query(sql, obj, function(errorLog, resultLogs){
-                        if(errorLog) connection.rollback(function(){
-                            res.send("Erorr");
-                            throw errorLog;
-                        });
-                        // Commit kết thúc transaction
+
+        try {
+            pool.getConnection(function(err, connection) {
+                connection.beginTransaction(function(errTran){
+                    if(errTran) throw errTran;
+                    else objDb.executeQuery(sql, obj, connection)
+                    .then(results => {
+                        if (id == '-1') {
+                            sql = "INSERT INTO `admin` SET ?";
+                            obj = {
+                                UserName: req.body.username,
+                                PassWord: "12345678",
+                                UserId: results.insertId,
+                                BranchId: req.body.branch,
+                                JurisdictionId: req.body.jurisdiction,
+                                IdentityCard: req.body.identitycard,
+                                TotalSalary: req.body.salary
+                            };
+                        } else {
+                            sql = "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
+                            obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.username]
+                        }
+                        return objDb.executeQuery(sql, obj, connection);
+                    })
+                    .then(results => {
                         connection.commit(function(errComit){
                             if(errComit) connection.rollback(function(){
                                 res.send("Erorr");
@@ -145,39 +163,31 @@ var RoutePersonnel = function(app, pool) {
                             });
                             res.send("Success");
                         });
+                    })
+                    .catch(error => {
+                        connection.rollback(function(){
+                            res.send("Erorr");
+                            throw error;
+                        });
                     });
                 });
             });
-        });
+        } catch (error) {
+            res.send("Erorr");
+        }
     });
     // Delete
     app.get('/delete/personnel/:id', function(req, res){
-        var sql = "DELETE FROM `admin` WHERE UserName=?";
-        pool.getConnection(function(err, connection) {
-            connection.beginTransaction(function(errTran){
-                if(errTran) throw errTran;
-                connection.query(sql, [req.params.id],function(error, results, fields){
-                    if(error) connection.rollback(function(){
-                        res.send("Erorr");
-                        throw error;
-                    });
-                    // Cập nhật Log liên quan đến thay đổi csdl
-                    var dNow = new Date();
-                    var insertLog = "INSERT INTO `log` SET ?";
-                    var objLog = {
-                        SqlAction: sql,
-                        NoteAction: "Delete Admin, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
-                        Action: "Delete",
-                        DateCreate: dNow.toLocaleString(),
-                        AdminId: "root",
-                        StateAction: "0"
-                    }
-                    connection.query(insertLog, objLog, function(errorLog, resultLogs){
-                        if(errorLog) connection.rollback(function(){
-                            res.send("Erorr");
-                            throw errorLog;
-                        });
-                        // Commit kết thúc transaction
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "DELETE FROM `admin` WHERE UserName=?";
+
+        try {
+            pool.getConnection(function(err, connection) {
+                connection.beginTransaction(function(errTran){
+                    if(errTran) throw errTran;
+                    else objDb.executeQuery(sql, [req.params.id], connection)
+                    .then(results => {
                         connection.commit(function(errComit){
                             if(errComit) connection.rollback(function(){
                                 res.send("Erorr");
@@ -185,27 +195,41 @@ var RoutePersonnel = function(app, pool) {
                             });
                             res.send("Success");
                         });
+                    })
+                    .catch(error => {
+                        connection.rollback(function(){
+                            res.send("Erorr");
+                            throw error;
+                        });
                     });
                 });
             });
-        });
+        } catch (error) {
+            res.send("Erorr");
+        }
     });
     // Load data
     app.get('/loaddata/jurisdiction', function(req, res) {
-        var sql = "select * from jurisdiction; ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select * from jurisdiction; ";
         sql += " select * from branch";
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        res.send(results);
-                    } else {
-                        res.send("Error");
-                    }
-                });
-        });
+
+        try {
+            objDb.getData(sql)
+            .then(results => {
+                if (results.length>0) {
+                    res.send(results);
+                } else {
+                    res.send("Error");
+                }
+            })
+            .catch(error => {
+                res.send("Error");
+            });
+        } catch (error) {
+            res.send("Error");
+        }
     });
 }
 

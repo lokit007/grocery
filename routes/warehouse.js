@@ -1,12 +1,14 @@
 // Model
-var Warehouse = require("../models/warehouse.js");
-var Db = require("../models/database.js");
+let Warehouse = require("../models/warehouse.js");
+let Db = require("../models/database.js");
 
 // Route
-var RouteWarehouse = function(app, pool) {
+let RouteWarehouse = function(app, pool) {
     // Mới khởi tạo
     app.get('/warehouse', function(req, res){
-        var sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
         sql += "Price, NewNumber, NewPrice, OldNumber, OldPrice, ";
         sql += "CategoryId, `category`.Name as CategoryName from depot ";
         sql += "inner join `product` on ProductId = IdProduct ";
@@ -14,29 +16,30 @@ var RouteWarehouse = function(app, pool) {
         sql += "inner join `category` on CategoryId = IdCategory ";
         sql += "limit 0, 10 ";
         try {
-            pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Warehouse(results[i].BranchId, results[i].BranchName, results[i].ProductId, results[i].ProductName, results[i].Price, results[i].NewNumber, results[i].NewPrice, results[i].OldNumber, results[i].OldPrice, results[i].CategoryId, results[i].CategoryName));
-                        }
-                        res.render("home", {screen: 4, data : objList});
-                    } else {
-                        res.render("home", {screen: 4, data : {}});
+            objDb.getData(sql)
+            .then(results => {
+                if (results.length>0) {
+                    let objList = [];
+                    for(let i=0; i<results.length; i++) {
+                        objList.push(new Warehouse(results[i].BranchId, results[i].BranchName, results[i].ProductId, results[i].ProductName, results[i].Price, results[i].NewNumber, results[i].NewPrice, results[i].OldNumber, results[i].OldPrice, results[i].CategoryId, results[i].CategoryName));
                     }
-                });
-            });    
+                    res.render("home", {screen: 4, session: session, data : objList});
+                } else {
+                    res.render("home", {screen: 4, session: session, data : {}});
+                }
+            })
+            .catch(error => {
+                res.render("home", {screen: 4, session: session, data : {}});
+            });
         } catch (errorall) {
             res.redirect("error");
         }
     });
     // Thông tin theo id
     app.get('/warehouse/:id', function(req, res){
-        var sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select UserName, PassWord, IdentityCard, TotalSalary, ";
         sql += "UserId, FullName, `user`.Address, `user`.Phone, `user`.Email, BranchId, NameBranch, "
         sql += "JurisdictionId, `jurisdiction`.Name as NameJurisdiction, `jurisdiction`.Description "
         sql += "from `admin` "
@@ -44,24 +47,30 @@ var RouteWarehouse = function(app, pool) {
         sql += "inner join `jurisdiction` on `admin`.JurisdictionId = `jurisdiction`.IdJurisdiction "
         sql += "inner join `branch` on `admin`.BranchId = `branch`.IdBranch ";
         sql += "where UserName = ?";
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, [req.params.id], function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var i = 0;
-                        var obj = new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description)
-                        res.send(obj);
-                    } else {
-                        res.send({});
-                    }
-                });
-        });
+
+        try {
+            objDb.getData(sql, [req.params.id])
+            .then(results => {
+                if (results.length>0) {
+                    let i = 0;
+                    let obj = new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description)
+                    res.send(obj);
+                } else {
+                    res.send({});
+                }
+            })
+            .catch(error => {
+                res.send({});
+            });
+        } catch (error) {
+            res.send({});
+        }
     });
     // Search
     app.get('/search/warehouse', function(req, res){
-        var sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select BranchId, NameBranch as BranchName, ProductId, product.Name as ProductName, ";
         sql += "Price, NewNumber, NewPrice, OldNumber, OldPrice, ";
         sql += "CategoryId, `category`.Name as CategoryName from depot ";
         sql += "inner join `product` on ProductId = IdProduct ";
@@ -70,35 +79,41 @@ var RouteWarehouse = function(app, pool) {
         sql += "where BranchId = ? and CategoryId = ? ";
         sql += "and product.Name like N? ";
         sql += "limit ?, 10 ";
-        var param = [
+        let obj = [
             req.query.branch,
             req.query.category,
             "%"+req.query.textsearch+"%",
             parseInt(req.query.index)
-        ]
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, param, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        var objList = [];
-                        for(var i=0; i<results.length; i++) {
-                            objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
-                        }
-                        res.send(objList);
-                    } else {
-                        res.send([]);
+        ];
+
+        try {
+            objDb.getData(sql, obj)
+            .then(results => {
+                if (results.length>0) {
+                    let objList = [];
+                    for(let i=0; i<results.length; i++) {
+                        objList.push(new Personnel(results[i].UserName, results[i].PassWord, results[i].IdentityCard, results[i].TotalSalary, results[i].UserId, results[i].FullName, results[i].Address, results[i].Phone, results[i].Email, results[i].BranchId, results[i].NameBranch, results[i].JurisdictionId, results[i].NameJurisdiction, results[i].Description));
                     }
-                });
-        }); 
+                    res.send(objList);
+                } else {
+                    res.send([]);
+                }
+            })
+            .catch(error => {
+                res.send([]);
+            })
+        } catch (error) {
+            res.send([]);
+        } 
     });
     // Update
     app.post('/update/warehouse', function(req, res){
-        var sql = "";
-        var obj = {};
-        var id = req.body.id;
-        var dNow = new Date();
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "";
+        let obj = {};
+        let id = req.body.id;
+        let dNow = new Date();
         if (id == '-1') {
             sql = "INSERT INTO `user` SET ?";
             obj = {
@@ -155,7 +170,9 @@ var RouteWarehouse = function(app, pool) {
     });
     // Delete
     app.get('/delete/warehouse/:id', function(req, res){
-        var sql = "DELETE FROM `admin` WHERE UserName=?";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "DELETE FROM `admin` WHERE UserName=?";
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
@@ -165,9 +182,9 @@ var RouteWarehouse = function(app, pool) {
                         throw error;
                     });
                     // Cập nhật Log liên quan đến thay đổi csdl
-                    var dNow = new Date();
-                    var insertLog = "INSERT INTO `log` SET ?";
-                    var objLog = {
+                    let dNow = new Date();
+                    let insertLog = "INSERT INTO `log` SET ?";
+                    let objLog = {
                         SqlAction: sql,
                         NoteAction: "Delete Admin, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
                         Action: "Delete",
@@ -195,7 +212,9 @@ var RouteWarehouse = function(app, pool) {
     });
     // Load data
     app.get('/loaddata/warehouse', function(req, res) {
-        var sql = "select * from branch; ";
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = "select * from branch; ";
         sql += " select * from category; ";
         sql += " select * from supplier ";
         
