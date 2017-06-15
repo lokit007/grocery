@@ -27,6 +27,7 @@ let RouteBranch = function(app, pool) {
                             objList.push(new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax));
                         }
                     }
+                    console.log(objList);
                     res.render("home", {screen: 0, session: session, data : objList});
                 } else {
                     res.render("home", {screen: 0, session: session, data : {}});
@@ -123,7 +124,6 @@ let RouteBranch = function(app, pool) {
                     Email: req.body.email,
                     Fax: req.body.fax
                 }
-                conole.log('add ');
             } else {
                 sql += "UPDATE `branch` SET NameBranch = ?, Address = ?, Phone = ?, Email = ?, Fax = ? WHERE IdBranch = ?";
                 obj = [req.body.name, req.body.address, req.body.phone, req.body.email, req.body.fax, id]

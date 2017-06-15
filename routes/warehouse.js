@@ -126,6 +126,50 @@ let RouteWarehouse = function(app, pool) {
             sql = "UPDATE `user` SET FullName = ?, Address = ?, Phone = ?, Email = ? WHERE IdUser = ?";
             obj = [req.body.fullname, req.body.address, req.body.phone, req.body.email, id]
         }
+
+        try {
+            pool.getConnection(function(err, connection) {
+                connection.beginTransaction(function(errTran){
+                    if(errTran) throw errTran;
+                    else objDb.executeQuery(sql, obj, connection)
+                    .then(results => {
+                        if (id == '-1') {
+                            sql = "INSERT INTO `admin` SET ?";
+                            obj = {
+                                UserName: req.body.username,
+                                PassWord: "12345678",
+                                UserId: results.insertId,
+                                BranchId: req.body.branch,
+                                JurisdictionId: req.body.jurisdiction,
+                                IdentityCard: req.body.identitycard,
+                                TotalSalary: req.body.salary
+                            };
+                        } else {
+                            sql = "UPDATE `admin` SET BranchId = ?, JurisdictionId = ?, IdentityCard = ?, TotalSalary = ? WHERE UserName = ?";
+                            obj = [req.body.branch, req.body.jurisdiction, req.body.identitycard, req.body.salary, req.body.username]
+                        }
+                        return objDb.executeQuery(sql, obj, connection);
+                    })
+                    .then(results => {
+                        connection.commit(function(errComit){
+                            if(errComit) connection.rollback(function(){
+                                res.send("Erorr");
+                                throw errComit;
+                            });
+                            res.send("Success");
+                        });
+                    })
+                    .catch(error => {
+                        connection.rollback(function(){
+                            res.send("Erorr");
+                            throw error;
+                        });
+                    })
+                });
+            });
+        } catch (error) {
+            res.send("Erorr");
+        }
         pool.getConnection(function(err, connection) {
             connection.beginTransaction(function(errTran){
                 if(errTran) throw errTran;
@@ -173,31 +217,13 @@ let RouteWarehouse = function(app, pool) {
         let objDb = new Db(pool);
         let session = req.session.admin;
         let sql = "DELETE FROM `admin` WHERE UserName=?";
-        pool.getConnection(function(err, connection) {
-            connection.beginTransaction(function(errTran){
-                if(errTran) throw errTran;
-                connection.query(sql, [req.params.id],function(error, results, fields){
-                    if(error) connection.rollback(function(){
-                        res.send("Erorr");
-                        throw error;
-                    });
-                    // Cập nhật Log liên quan đến thay đổi csdl
-                    let dNow = new Date();
-                    let insertLog = "INSERT INTO `log` SET ?";
-                    let objLog = {
-                        SqlAction: sql,
-                        NoteAction: "Delete Admin, Id = "+req.params.id+", State : Success, Row : "+results.affectedRows,
-                        Action: "Delete",
-                        DateCreate: dNow.toLocaleString(),
-                        AdminId: "root",
-                        StateAction: "0"
-                    }
-                    connection.query(insertLog, objLog, function(errorLog, resultLogs){
-                        if(errorLog) connection.rollback(function(){
-                            res.send("Erorr");
-                            throw errorLog;
-                        });
-                        // Commit kết thúc transaction
+
+        try {
+            pool.getConnection(function(err, connection) {
+                connection.beginTransaction(function(errTran){
+                    if(errTran) throw errTran;
+                    else objDb.executeQuery(sql, [req.params.id], connection)
+                    .then(results => {
                         connection.commit(function(errComit){
                             if(errComit) connection.rollback(function(){
                                 res.send("Erorr");
@@ -205,10 +231,18 @@ let RouteWarehouse = function(app, pool) {
                             });
                             res.send("Success");
                         });
+                    })
+                    .catch(error => {
+                        connection.rollback(function(){
+                            res.send("Erorr");
+                            throw error;
+                        });
                     });
                 });
             });
-        });
+        } catch (error) {
+            res.send("Erorr");
+        }
     });
     // Load data
     app.get('/loaddata/warehouse', function(req, res) {
@@ -218,18 +252,21 @@ let RouteWarehouse = function(app, pool) {
         sql += " select * from category; ";
         sql += " select * from supplier ";
         
-        pool.getConnection(function(err, connection) {
-            if (err) throw err;
-            else connection.query(sql, function (error, results, fields) {
-                    connection.release();
-                    if (error) throw error;
-                    else if (results.length>0) {
-                        res.send(results);
-                    } else {
-                        res.send("Error");
-                    }
-                });
-        });
+        try {
+            objDb.getData(sql)
+            .then(results => {
+                if (results.length>0) {
+                    res.send(results);
+                } else {
+                    res.send("Error");
+                }
+            })
+            .catch(error => {
+                res.send("Error");
+            });
+        } catch (error) {
+            res.send("Error");
+        }
     });
     // import data excel
     app.post('/importexcel/warehouse', function(req, res){
@@ -283,37 +320,6 @@ let RouteWarehouse = function(app, pool) {
                     } finally {
                         connection.release();
                     }
-                    
-                }
-            });
-        });
-    });
-    
-    app.get('/demo', function(req, res1) {
-        let objDb = new Db(pool);
-        pool.getConnection(function(err, connection) {
-            connection.beginTransaction(function(errTran){
-                if(errTran) throw errTran;
-                else {
-                    objDb.executeQuery("INSERT INTO `category` SET ?", {Name: "Danh mục 1", DateCreate: "2017/06/04", State: 0}, connection)
-                    .then(res => objDb.executeQuery("INSERT INTO `product` SET ?", {CategoryId: res.insertId, Name: "Sản phẩm 1", Price: 5000, DateUpdate: "2017/06/04"}, connection))
-                    .then(res => objDb.executeQuery("INSERT INTO `category` SET ?", {Name: "Danh mục 2", DateCreate: "2017/06/04", State: 0}, connection))
-                    .then(res => objDb.executeQuery("INSERT INTO `prodct` SET ?", {CategoryId: res.insertId, Name: "Sản phẩm 2", Price: 5000, DateUpdate: "2017/06/04"}, connection))
-                    .then(res => {
-                        connection.commit(function(errComit){
-                            connection.release();
-                            if(errComit) connection.rollback(() => {
-                                res1.send("Thay đổi thất bại");
-                            });
-                            res1.send("Thay đổi ok")
-                        });
-                    })
-                    .catch(err => {
-                        connection.release();
-                        connection.rollback(() => {
-                            res1.send("Thay đổi thất bại");
-                        });
-                    });
                 }
             });
         });

@@ -51,7 +51,7 @@ let RoutePersonnel = function(app, pool) {
         sql += "where UserName = ?";
 
         try {
-            objDb.getData()
+            objDb.getData(sql, [req.params.id])
             .then(results => {
                 if (results.length>0) {
                     let i = 0;

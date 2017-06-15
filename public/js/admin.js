@@ -58,6 +58,10 @@ $(document).ready(function(){
     $("#backToTop").click(function(){
        $('html, body').animate({ scrollTop: 0 }, 500);
    });
+   $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+    $(window).resize(function(){
+        $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
+    });
    // Input branch
    $('input.form-control').on('input', function(){
         $('tbody').children('tr').remove();
