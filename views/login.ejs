@@ -9,15 +9,16 @@
         <title>Đăng nhập hệ thống</title>
         <meta name="description" content="Login system">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../css/bootstrap.min.css" rel="stylesheet" />
-        <link href="../css/adminstyle.css" rel="stylesheet" />
-        <script src="../js/jquery-3.1.1.min.js"></script>
-        <script src="../js/bootstrap.min.js"></script>
-        <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+        <base href="http://localhost:3000">
+        <link href="css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/adminstyle.css" rel="stylesheet" />
+        <script src="js/jquery-3.1.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     </head>
     <body>
         <div id="d-content-login">
-            <img id="img-logo" src="../images/image-login.jpg" />
+            <img id="img-logo" src="images/image-login.jpg" />
             <h3 class="head-3">Đăng nhập hệ thống</h3>
             <% if(meserr) { %>
                 <div class="bg-danger div-error"><%= meserr %></div>

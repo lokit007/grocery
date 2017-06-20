@@ -57,22 +57,22 @@
 <% } else { %>
 <form action="#" name='f-update' method="POST" autocomplete="on">
     <input type="hidden" id="key" name="key" value="<%= data.id %>" />
-    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." value="<%= data.name %>" />
-    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." value="<%= data.address %>" />
+    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên chi nhánh ..." value="<%= data.name %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
+    <input type="text" id="address" class="form-control ctr-1x" name="addressbranch" placeholder="(*) Địa chỉ ..." value="<%= data.address %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
     <div>
         <div class="ctr-3x">
-            <input type="tel" id="phone" class="form-control" name="phonebranch" placeholder="(*) Số điện thoại ..." value="<%= data.phone %>"/>
+            <input type="tel" id="phone" class="form-control" name="phonebranch" placeholder="(*) Số điện thoại ..." value="<%= data.phone %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
         </div>
         <div class="ctr-3x">
-            <input type="email" id="email" class="form-control" name="emailbranch" placeholder="Email ..." value="<%= data.email %>" />
+            <input type="email" id="email" class="form-control" name="emailbranch" placeholder="Email ..." value="<%= data.email %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
         </div>
         <div class="ctr-3x">
-            <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." value="<%= data.fax %>" />
+            <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." value="<%= data.fax %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
         </div>    
         <div class="d-clear"></div>
     </div>
     <% if(session.jurisdiction < 3) { %>
-        <button type="submit" id="update" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+        <button type="submit" id="update" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
     <% } %>
 </form>
 <div id="view" class="d-clear"></div>

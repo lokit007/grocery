@@ -10,7 +10,7 @@ let RouteBranch = function(app, pool) {
         let session = req.session.admin;
         let sql = "select * from `branch` ";
         if(session.jurisdiction > 1){
-            sql += "where IdBranch = " + pool.escape(session.jurisdiction) + " ";
+            sql += "where IdBranch = " + pool.escape(session.branch) + " ";
         }
         sql += "order by IdBranch limit 0, 10";
 
@@ -27,7 +27,6 @@ let RouteBranch = function(app, pool) {
                             objList.push(new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax));
                         }
                     }
-                    console.log(objList);
                     res.render("home", {screen: 0, session: session, data : objList});
                 } else {
                     res.render("home", {screen: 0, session: session, data : {}});
@@ -60,6 +59,33 @@ let RouteBranch = function(app, pool) {
             }
         } catch (error) {
              res.send({});
+        }
+    });
+    // Chi tiết một chi nhánh
+    app.get('/info/branch/:id', function(req, res) {
+        let objDb = new Db(pool);
+        let session = req.session.admin;
+        let sql = `select * from branch where IdBranch = ?; 
+            select UserName, UserId, FullName, Address, Phone, Email, IdentityCard, TotalSalary, JurisdictionId, jurisdiction.Name, Description from admin 
+            inner join user on UserId = IdUser 
+            inner join jurisdiction on JurisdictionId = IdJurisdiction 
+            where BranchId = ?;`
+        let obj = [req.params.id, req.params.id];
+
+        try {
+            objDb.getData(sql, obj)
+            .then(results => {
+                if (results.length>0) {
+                    res.render("home", {screen: 10, session: session, data : {branch: results[0], personnel: results[1]}});
+                } else {
+                    res.render("error");
+                }
+            })
+            .catch(error => {
+                res.render("error");
+            });
+        } catch (error) {
+            res.render("error");
         }
     });
     // Lấy danh sách chi nhánh tìm kiếm autocomplex
