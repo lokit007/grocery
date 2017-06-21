@@ -14,6 +14,12 @@
         <div class="ctr-3x">
             <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." />
         </div>    
+        <div class="ctr-3x" style="float: right !important; margin-right: 10px;">
+            <span id="chitiet" class="fa-stack fa-lg" style="cursor: pointer;" title="Xem chi tiết">
+                <i class="fa fa-square-o fa-stack-2x"></i>
+                <i class="fa fa-info fa-stack-1x"></i>
+            </span>
+        </div>
         <div class="d-clear"></div>
     </div>
     <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa Chi nhánh</button>
@@ -68,7 +74,7 @@
         </div>
         <div class="ctr-3x">
             <input type="text" id="fax" class="form-control" name="faxbranch" placeholder="Số fax ..." value="<%= data.fax %>" <% if(session.jurisdiction > 2) { %> disabled  <% } %> />
-        </div>    
+        </div> 
         <div class="d-clear"></div>
     </div>
     <% if(session.jurisdiction < 3) { %>

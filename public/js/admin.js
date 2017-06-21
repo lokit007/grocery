@@ -110,6 +110,7 @@ function infobranch(id) {
                 $("#update").removeAttr('disabled');
                 $("#delete").removeAttr('disabled');
                 $("#delete").attr('onclick', "deletebranch("+data.id+");");
+                $("#chitiet").attr('onclick', "window.location.href='info/branch/"+data.id+"'");
             } else {
                 $("#update").attr('disabled', 'true');
                 $("#delete").attr('disabled', 'true');

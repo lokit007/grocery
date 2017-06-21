@@ -66,7 +66,7 @@ let RouteBranch = function(app, pool) {
         let objDb = new Db(pool);
         let session = req.session.admin;
         let sql = `select * from branch where IdBranch = ?; 
-            select UserName, UserId, FullName, Address, Phone, Email, IdentityCard, TotalSalary, JurisdictionId, jurisdiction.Name, Description from admin 
+            select UserName, UserId, FullName, Address, Phone, Email, IdentityCard, TotalSalary, Image, JurisdictionId, jurisdiction.Name, Description from admin 
             inner join user on UserId = IdUser 
             inner join jurisdiction on JurisdictionId = IdJurisdiction 
             where BranchId = ?;`
