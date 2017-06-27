@@ -22,12 +22,15 @@ let RouteBranch = function(app, pool) {
                     if(session.jurisdiction > 1){
                         let i = 0;
                         objList = new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax);
+                        res.redirect("/info/branch/"+session.branch);
+                        res.end();
                     } else {
                         for(let i=0; i<results.length; i++) {
                             objList.push(new Branch(results[i].IdBranch, results[i].NameBranch, results[i].Address, results[i].Phone, results[i].Email, results[i].Fax));
                         }
+                        res.render("home", {screen: 0, session: session, data : objList});
                     }
-                    res.render("home", {screen: 0, session: session, data : objList});
+                    // res.render("home", {screen: 0, session: session, data : objList});
                 } else {
                     res.render("home", {screen: 0, session: session, data : {}});
                 }
