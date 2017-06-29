@@ -1,5 +1,5 @@
 <strong id="tittle">Thông tin chi tiết chi nhánh</strong>
-<% if(session.jurisdiction < 2) { 
+<% 
     if(data.branch.length > 0) {
 %>
 <form action="#" name='f-update' method="POST" autocomplete="on">
@@ -18,8 +18,10 @@
         </div>    
         <div class="d-clear"></div>
     </div>
+    <% if(session.jurisdiction < 3) { %>
     <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn"><i class="fa fa-trash-o fa-lg" aria-hidden="true"></i> Xóa Chi nhánh</button>
     <button type="submit" id="update" class="btn btn-success btn-sm ctr-btn"><i class="fa fa-check fa-lg" aria-hidden="true"></i> Cập nhật lại</button>
+    <% } %>
     <button type="button" id="back" class="btn btn-default btn-sm ctr-btn" onclick="window.history.back();"><i class="fa fa-undo fa-lg" aria-hidden="true"></i> Quay lại</button>
 </form>
 <div id="view" class="d-clear"></div>
@@ -45,7 +47,7 @@
     <% } %>
     <% } %>
 </div>
-<% } } %>
+<% } %>
 <style>
 p#sodo {
     font-size: 2em;
