@@ -95,19 +95,20 @@ let RouteBranch = function(app, pool) {
     app.get('/search/branch', function(req, res){
         let objDb = new Db(pool);
         let session = req.session.admin;
+        let strsearch = req.query.name;
         let sql = "select * from `branch` ";
         sql += "WHERE NameBranch LIKE N? "
-        sql += "AND Address LIKE N? "
-        sql += "AND Phone LIKE ? "
-        sql += "AND (Email LIKE ? OR Email is null)"
-        sql += "AND (Fax LIKE ? OR Fax is null)"
+        sql += "OR Address LIKE N? "
+        sql += "OR Phone LIKE ? "
+        sql += "OR Email LIKE ? "
+        sql += "OR Fax LIKE ? "
         sql += "order by IdBranch LIMIT ?, 10";
         let obj = [
-            "%" + req.query.name + "%",
-            "%" + req.query.address + "%",
-            "%" + req.query.phone + "%",
-            "%" + req.query.email + "%",
-            "%" + req.query.fax + "%",
+            "%" + strsearch + "%",
+            "%" + strsearch + "%",
+            "%" + strsearch + "%",
+            "%" + strsearch + "%",
+            "%" + strsearch + "%",
             parseInt(req.query.index)
         ];
         try {

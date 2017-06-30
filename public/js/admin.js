@@ -62,10 +62,28 @@ $(document).ready(function(){
     $(window).resize(function(){
         $("#d-fixheight").attr('style', 'max-height: ' + ($('#d-contain').height() - $("#view").offset().top - 10) + "px;");
     });
-   // Input branch
-   $('input.search-control').on('input', function(){
+   // Input search
+   $('input.search-control').on('change', function(){
         $('tbody').children('tr').remove();
-        searchbranch();
+        switch($(this).attr('data')) {
+            case "branch" : 
+                searchbranch();
+                break;
+            case "nhanvien" : 
+                searchbranch();
+                break;
+            case "danhmuc" : 
+                searchbranch();
+                break;
+            case "sanpham" : 
+                searchbranch();
+                break;
+            case "khohang" : 
+                searchbranch();
+                break;
+            default : 
+                console.log("Not control search");
+        }
    });
    $('#btn-file').on("change",function(event) {
     var tmppath = URL.createObjectURL(event.target.files[0]);
@@ -129,11 +147,7 @@ function searchbranch() {
         type: "GET",
         data : {
             index: $('tbody').children('tr').length,
-            name: $("#name").val(),
-            address: $("#address").val(),
-            phone: $("#phone").val(),
-            email: $("#email").val(),
-            fax: $("#fax").val()
+            name: $("#name").val()
         },
         beforeSend: function() {
             $("#d-waiting").show();

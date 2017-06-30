@@ -2,7 +2,7 @@
 <% if(session.jurisdiction < 2) { %>
 <form action="#" name='f-update' method="POST" autocomplete="on">
     <input type="hidden" id="key" name="key" value="-1" />
-    <input type="text" id="name" class="search-control form-control ctr-1x" name="namebranch" title="Tên chi nhánh hoặc điều kiện tìm kiếm dữ liệu" placeholder="(*) Nhập tên chi nhánh hoặc điều kiện tìm kiếm ..." />
+    <input type="text" id="name" name="namebranch" class="search-control form-control ctr-1x" data="branch" title="Tên chi nhánh hoặc điều kiện tìm kiếm dữ liệu" placeholder="(*) Nhập tên chi nhánh hoặc điều kiện tìm kiếm ..." />
     <input type="text" id="address" class="form-control ctr-1x" name="addressbranch"  title="Địa chỉ chi nhánh" placeholder="(*) Địa chỉ ..." />
     <div>
         <div class="ctr-3x">
