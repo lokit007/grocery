@@ -86,9 +86,15 @@ $(document).ready(function(){
         }
    });
    $('#btn-file').on("change",function(event) {
-    var tmppath = URL.createObjectURL(event.target.files[0]);
-    console.log(tmppath);
-});
+        var tmppath = URL.createObjectURL(event.target.files[0]);
+        console.log(tmppath);
+    });
+    // Even model
+    $('#mdShowMes').on('hidden.bs.modal', function (e) {
+        if($('#md-div').hasClass('modal-error') === false) {
+            window.location.reload(true);
+        }
+    });
 });
 
 // Show Message alert
@@ -104,7 +110,7 @@ function showAlert(tp, tl, ct) {
         $("#md-title").attr("class", "fa fa-check-square-o");
     }
     $("#md-title").text(tl);
-    $("#md-content").val(ct);
+    $("#md-content").text(ct);
     $("#mdShowMes").modal('show');
 }
 
@@ -211,79 +217,41 @@ function deletebranch(id) {
 }
 // Update branch
 function updatebranch(iadd) {
-    // Check item null
-    var name = $("#name").val();
-    var address = $("#address").val();
-    var phone = $("#phone").val();
-    if (name == "") {
-        alert("Tên chi nhánh không được để trống!!!");
-        $("#name").focus();
-    } else if(address == "") {
-        alert("Địa chỉ của chi nhánh không được để trống!!!");
-        $("#address").focus();
-    } else if(phone == "") {
-        alert("Nhập số điện thoại chi nhánh !!!");
-        $("#phone").focus();
-    } else {
-        // Check data exist
-        $.ajax({
-            url: "/search/branch",
-            type: "GET",
-            data : {
-                index: 0,
-                name: $("#name").val(),
-                address: $("#address").val(),
-                phone: $("#phone").val(),
-                email: $("#email").val(),
-                fax: $("#fax").val()
-            },
-            beforeSend: function() {
-                $("#d-waiting").show();
-            },
-            success: function(data){
-                $("#d-waiting").hide();
-                if (data !== undefined) {
-                    if(data.length>0) {
-                        showAlert('error', " Lỗi ràng buộc dữ liệu hệ thống", "Chi nhánh đã tồn tại trong hệ thống!!!\nVui lòng thao tác lại sau.");
-                    } else {
-                        // Update data
-                        var idChange = '-1';
-                        if(iadd !== true) {
-                            idChange = $("#key").val();
-                        }
-                        $.ajax({
-                            url: "/update/branch",
-                            type: "POST",
-                            data: {
-                                id: idChange,
-                                name: $("#name").val(),
-                                address: $("#address").val(),
-                                phone: $("#phone").val(),
-                                email: $("#email").val(),
-                                fax: $("#fax").val() 
-                            },
-                            success: function(dataChange){
-                                if (dataChange === "Success") {
-                                    alert("Đã cập nhật thành công chi nhánh.");
-                                    window.location.reload(true);  
-                                } else {
-                                    showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-                                }
-                            },
-                            error: function(){
-                                showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
-                            }
-                        });
-                    }
-                }
-            },
-            error: function(){
-                $("#d-waiting").hide();
+    // Update data
+    var idChange = '-1';
+    if(iadd !== true) {
+        idChange = $("#key").val();
+    }
+    console.log(idChange);
+    $.ajax({
+        url: "/update/branch",
+        type: "POST",
+        data: {
+            id: idChange,
+            name: $("#name").val(),
+            address: $("#address").val(),
+            phone: $("#phone").val(),
+            email: $("#email").val(),
+            fax: $("#fax").val() 
+        },
+        beforeSend: function() {
+            $("#d-waiting").show();
+        },
+        success: function(dataChange){
+            $("#d-waiting").hide();
+            if (dataChange === "Success") {
+                showAlert('success', "Cập nhật chi nhánh", "Đã cập nhật thành công chi nhánh.");
+                // alert("Đã cập nhật thành công chi nhánh.");
+                // window.location.reload(true);  
+            } else {
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
-        });
-    }
-    
+        },
+        error: function(){
+            $("#d-waiting").hide();
+            showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
+        }
+    });
 }
 
 // Category info

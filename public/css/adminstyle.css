@@ -12,7 +12,7 @@ input.error {
     background-color: #f3d653;
 }
 .modal-success {
-    background-color: #7db9ec;
+    background-color: #78e68b;
 }
 /* Màn hình login default */
 img#img-logo {
@@ -161,6 +161,7 @@ strong#tittle {
 }
 .d-table {
     margin-top: 10px;
+    border-top: 2px solid gray;
 }
 td.col-phone {
     width: 200px;
