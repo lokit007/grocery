@@ -1,11 +1,11 @@
 <strong id="tittle">Thông tin danh mục</strong>
-<form action="#" method="POST" autocomplete="on">
+<form action="#" method="POST">
     <input type="hidden" id="key" name="key" />
-    <input type="text" id="name" class="form-control ctr-1x" name="namebranch" placeholder="(*) Nhập tên danh mục ..." />
-    <textarea id="description" class="form-control ctr-1x" name="description" placeholder="Mô tả cho danh mục này ..."></textarea>
-    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa danh mục</button>
-    <button type="button" id="update" onclick="updatecategory(false);" class="btn btn-success btn-sm ctr-btn" disabled><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
-    <button type="button" id="add" onclick="updatecategory(true);" class="btn btn-primary btn-sm ctr-btn"><i class="fa fa-plus" aria-hidden="true"></i> Thêm danh mục</button>
+    <input type="text" id="name" class="form-control search-control ctr-1x" name="namebranch" data="category" index="1" placeholder="(*) Nhập tên danh mục ..." />
+    <textarea id="description" class="form-control ctr-1x" name="description" index="2" placeholder="Mô tả cho danh mục này ..."></textarea>
+    <button type="button" id="delete" class="btn btn-danger btn-sm ctr-btn" disabled index="5"><i class="fa fa-trash-o" aria-hidden="true"></i> Xóa danh mục</button>
+    <button type="button" id="update" onclick="updatecategory(false);" class="btn btn-success btn-sm ctr-btn" disabled index="4"><i class="fa fa-check" aria-hidden="true"></i> Cập nhật lại</button>
+    <button type="button" id="add" onclick="updatecategory(true);" class="btn btn-primary btn-sm ctr-btn" index="3"><i class="fa fa-plus" aria-hidden="true"></i> Thêm danh mục</button>
 </form>
 <div id="view" class="d-clear"></div>
 <script>

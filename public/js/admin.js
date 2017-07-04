@@ -69,8 +69,8 @@ $(document).ready(function(){
             case "branch" : 
                 searchbranch();
                 break;
-            case "nhanvien" : 
-                searchbranch();
+            case "category" : 
+                searchcategory();
                 break;
             case "danhmuc" : 
                 searchbranch();
@@ -85,6 +85,14 @@ $(document).ready(function(){
                 console.log("Not control search");
         }
    });
+   // Tab index
+   $('input.form-control').on('keypress', function(e){
+        if(e.which == 13) {
+            e.preventDefault();
+            var index = +$(this).attr("index") + 1;
+            $("[index='" + index +"']").focus();
+        }
+    });
    $('#btn-file').on("change",function(event) {
         var tmppath = URL.createObjectURL(event.target.files[0]);
         console.log(tmppath);
