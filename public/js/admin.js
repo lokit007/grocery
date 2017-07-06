@@ -248,9 +248,7 @@ function updatebranch(iadd) {
         success: function(dataChange){
             $("#d-waiting").hide();
             if (dataChange === "Success") {
-                showAlert('success', "Cập nhật chi nhánh", "Đã cập nhật thành công chi nhánh.");
-                // alert("Đã cập nhật thành công chi nhánh.");
-                // window.location.reload(true);  
+                showAlert('success', "Cập nhật chi nhánh", "Đã cập nhật thành công chi nhánh."); 
             } else {
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
@@ -342,9 +340,8 @@ function deletecategory(id) {
             },
             success: function(data){
                 $("#d-waiting").hide();
-                if (data === "Success") {
-                    alert("Đã xóa thành công danh mục.");
-                    window.location.reload(true);  
+                if (data === "Success") { 
+                    showAlert('success', " Xóa dữ liệu", "Đã xóa thành công danh mục.");
                 } else {
                     showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
@@ -395,9 +392,8 @@ function updatecategory(iadd) {
                                 description: $("#description").val()
                             },
                             success: function(dataChange){
-                                if (dataChange === "Success") {
-                                    alert("Đã cập nhật thành công danh mục.");
-                                    window.location.reload(true);  
+                                if (dataChange === "Success") { 
+                                    showAlert('success', " Cập nhật dữ liệu", "Đã cập nhật thành công danh mục.");
                                 } else {
                                     showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                                 }
@@ -563,9 +559,8 @@ function deletepersonnel(id) {
             },
             success: function(data){
                 $("#d-waiting").hide();
-                if (data === "Success") {
-                    alert("Đã xóa thành công nhân viên.");
-                    window.location.reload(true);  
+                if (data === "Success") {  
+                    showAlert('success', "Xóa nhân viên", "Đã xóa thành công nhân viên.");
                 } else {
                     showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
@@ -605,8 +600,7 @@ function updatepersonnel(iadd) {
         success: function(dataChange){
             $("#d-waiting").hide();
             if (dataChange === "Success") {
-                alert("Đã cập nhật thành công nhân viên.");
-                window.location.reload(true);  
+                showAlert('success', "Cập nhật dữ liệu", "Đã cập nhật thành công nhân viên.");  
             } else {
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
@@ -758,8 +752,7 @@ function deletepartner(id) {
             success: function(data){
                 $("#d-waiting").hide();
                 if (data === "Success") {
-                    alert("Đã xóa thành công đối tác.");
-                    window.location.reload(true);  
+                    showAlert('success', "Xóa dữ liệu", "Đã xóa thành công đối tác.");
                 } else {
                     showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
                 }
@@ -797,6 +790,7 @@ function updatepartner(iadd) {
             if (dataChange === "Success") {
                 alert("Đã cập nhật đối tác thành công.");
                 window.location.reload(true);  
+                showAlert('success', "Cập nhật dữ liệu", "Đã cập nhật đối tác thành công.");
             } else {
                 showAlert('error', " Lỗi kết nối hệ thống", "Không cập nhật được cơ sở dữ liệu!!!\nVui lòng thao tác lại sau.");
             }
@@ -807,4 +801,3 @@ function updatepartner(iadd) {
         }
     });
 }
-
